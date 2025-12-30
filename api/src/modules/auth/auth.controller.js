@@ -29,7 +29,7 @@ export const registerUser = async(req, res)=>{
                 role: user.role
             }})
     }catch(err){
-        console.log(err.message)
+        console.log(err.message) //should remove//
         return res.status(500).json({message: 'internal server error'})
     }
 }

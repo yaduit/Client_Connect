@@ -1,27 +1,12 @@
-import express from 'express'
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
+import app from './app.js';
+import connectDB from './config/db.js';
 
 dotenv.config();
-const app = express();
-const port = process.env.PORT||3000;
-mongoose.set("strictQuery", true);
 
-const connect = async function(){
-    try{
-        await mongoose.connect(process.env.MONGO_URI)
-        console.log("connected to db")
-    }catch(err){
-        console.log(err.message)
-    }
-}
-connect()
+connectDB();
 
-
-app.get("/", function(req,res){
-    res.send("Hello from Express server!");
+const PORT = process.env.PORT||5000;
+app.listen(PORT, function(){
+    console.log("Server is running on port 5000");
 });
-
-app.listen(port, function(){
-    console.log("Server is running on port 3000");
-})
