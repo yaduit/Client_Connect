@@ -81,3 +81,13 @@ export const loginUser = async (req,res)=>{
         return res.status(500).json({message: 'internal server error'});
     }
 }; 
+
+export const logoutUser = async(req,res)=>{
+    const isProd = process.env.NODE_ENV === 'production'
+    res.clearCookie('token',{
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production'
+    });
+    return res.status(200).json({message: 'Logged out sucessfully'})
+}
