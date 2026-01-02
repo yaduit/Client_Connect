@@ -8,7 +8,6 @@ const router = express.Router();
 router.post('/register', registerUser );
 router.post('/login', loginUser);
 router.post('/logout', authMiddleware,logoutUser);
-router.post('/provider-only',authMiddleware,roleMiddleware('provider'),controller)
 router.get('/me',authMiddleware,function(req,res){
     res.status(201).json({message: 'Authenticated user', user: req.user})
    });
