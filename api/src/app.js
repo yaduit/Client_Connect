@@ -1,6 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import authRoutes from './modules/auth/auth.routes.js'
+import categoryRoutes from './modules/categories/category.routes.js'
 import cookieParser from 'cookie-parser'
 const app = express();
 
@@ -12,7 +13,9 @@ app.use(cookieParser());
 app.get("/", function(req,res){
     res.send("Hello from Express server!");
 });
-app.use('/api/auth', authRoutes)
+
+app.use('/api/auth', authRoutes);
+app.use('/api/categories', categoryRoutes);
 
 
 export default app
