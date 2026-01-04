@@ -4,7 +4,7 @@ const authMiddleware = async function (req,res,next){
     try{
         const token = req.cookies?.token;
         if(!token){
-            return req.status(401).json({message: 'Not Authenticated'})
+            return res.status(401).json({message: 'Not Authenticated'})
         }
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
