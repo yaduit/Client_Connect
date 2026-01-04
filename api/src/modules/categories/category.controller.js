@@ -38,3 +38,47 @@ export const getCategories = async(req,res)=>{
         return res.status(500).json({message: 'internal server error'})
     }
 };
+
+//Admin add subcategory to a category//
+
+export const addSubCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+    let { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ message: 'Subcategory name is required' });
+    }
+
+    name = name.trim();
+
+    const slug = name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    const category = await categoryModel.findById(categoryId);
+    if (!category) {
+      return res.status(404).json({ message: 'Category not found' });
+    }
+
+    const exists = category.subCategories.find(
+      (sub) => sub.slug === slug
+    );
+
+    if (exists) {
+      return res.status(409).json({ message: 'Subcategory already exists' });
+    }
+
+    category.subCategories.push({ name, slug });
+    await category.save();
+
+    return res.status(201).json({
+      message: 'Subcategory added successfully',
+      category,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
+  }
+};
