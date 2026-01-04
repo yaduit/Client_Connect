@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const userSchema = mongoose.Schema({
+const userSchema = new mongoose.Schema({
     name:{
         type: String,
         required: true,
@@ -36,8 +36,8 @@ const userSchema = mongoose.Schema({
         geo:{
             type:{
                 type: String,
-                enum: ['point'],
-                default: 'point'
+                enum: ['Point'],
+                default: 'Point'
             }
         }
     },
