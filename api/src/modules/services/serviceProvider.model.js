@@ -64,6 +64,8 @@ const serviceProviderSchema = new mongoose.Schema({
     
 },{timestamps: true});
 
+serviceProviderSchema.index({ 'location.geo': '2dsphere' });
+
 serviceProviderSchema.index({
   categoryId: 1,
   subCategorySlug: 1,
