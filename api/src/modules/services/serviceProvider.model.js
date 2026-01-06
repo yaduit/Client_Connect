@@ -38,7 +38,6 @@ const serviceProviderSchema = new mongoose.Schema({
             },
             coordinates:{
                 type: [Number],
-                index: '2dsphere',
                 required: true,
                 validate:{
                     validator: v => v.length === 2,
