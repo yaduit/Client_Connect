@@ -8,13 +8,17 @@ export const searchProviders = async(req,res)=>{
             lng,
             radius = 10,
             categoryId,
-            subCategorySlug
+            subCategorySlug,
+            page = 1,
+            limit = 10
         } = req.query;
        
         if(!lat||!lng){
            return res.status(400).json({message: 'Latitude and longitude are required'})
         }
-
+        const pageNumber = Number.isNaN(parseInt(page)) ? 1 : Math.max(parseInt(page),1);
+        const limitNumber = Number.isNaN(parseInt(limit)) ? 10 : Math.min(Math.max(parseInt(limit),1),50);
+        const skip = (pageNumber - 1) * limitNumber ; 
         const latitude = parseFloat(lat);
         const longitude = parseFloat(lng);
 
@@ -26,7 +30,8 @@ export const searchProviders = async(req,res)=>{
             if (isNaN(radiusKm) || radiusKm <= 0) {
             return res.status(400).json({ message: 'Invalid radius' });
             }
-            const maxDistance = radiusKm * 1000;
+            const maxRadius = 50;
+            const maxDistance = Math.min(radiusKm ,maxRadius)* 1000;
 
         const filters = {isActive: true};
         
@@ -76,9 +81,14 @@ export const searchProviders = async(req,res)=>{
           distanceKm: 1
         }
       },
-      { $limit: 50 }
+      {$skip: skip},
+      { $limit: limitNumber }
     ]);
-        return res.status(200).json({count: providers.length, providers});
+        return res.status(200).json({page: pageNumber,
+          limit: limitNumber,
+          results: providers.length,
+          providers
+        });
 
     }catch(error){
         console.log(error)
