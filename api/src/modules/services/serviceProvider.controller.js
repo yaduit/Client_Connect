@@ -1,5 +1,24 @@
 import serviceProviderModel from "./serviceProvider.model.js";
 import categoryModel from "../categories/category.model.js";
+import mongoose from 'mongoose';
+
+export const getProviderById = async (req,res) => {
+  try{
+    const {id} = req.params;
+    if(!mongoose.Types.ObjectId.isValid(id)){
+      return res.status(400).json({message: 'invalid provider id'});
+    }
+    const provider = await serviceProviderModel.findById(id).populate('categoryId', 'name slug');
+    if(!provider || !provider.isActive){
+      return res.status(404).json({message: 'service provider not found'});
+    }
+    return res.status(200).json({provider});
+
+  }catch(error){
+    console.log(error) //remove later
+    return res.status(500).json({message: 'internal server error'});
+  }
+};
 
 export const registerServiceProvider = async (req, res) => {
   try {
