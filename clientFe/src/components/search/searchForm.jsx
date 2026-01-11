@@ -8,10 +8,45 @@ const SearchForm = ({ onSearch }) => {
   const [sort, setSort] = useState("distance");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedSubCategory, setSelectedSubCategory] = useState("");
+  const [locating, setLocating] = useState(false);
+  const [locationError, setLocationError] = useState(null);
   const { categories, loading: categoriesLoading } = useCategories();
   const selectedCategoryObj = categories.find(
-  cat => cat._id === selectedCategory
-);
+    (cat) => cat._id === selectedCategory
+  );
+
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationError("Geolocation is not supported by your browser");
+      return;
+    }
+    setLocating(true);
+    setLocationError(null);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLat(position.coords.latitude);
+        setLng(position.coords.longitude);
+        setLocating(false);
+      },
+      (error) => {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationError("Location permission denied");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationError("Location unavailable");
+            break;
+          case error.TIMEOUT:
+            setLocationError("Location request timed out");
+            break;
+          default:
+            setLocationError("Failed to get Location");
+        }
+        setLocating(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,6 +67,18 @@ const SearchForm = ({ onSearch }) => {
         className="bg-white rounded-lg shadow p-4 mb-6 py-4"
       >
         <h4 className="text-lg font-semibold text-gray-800">Search Services</h4>
+
+        <button
+          type="button"
+          onClick={handleUseMyLocation}
+          disabled={locating}
+          className="text-sm text-green-600 hover:underline disabled:opacity-50"
+        >
+          {locating ? "Detecting Location..." : "Use my location"}
+        </button>
+        {locationError && (
+          <p className="text-sm text-red-600">{locationError}</p>
+        )}
         {/*location*/}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <input
@@ -115,10 +162,10 @@ const SearchForm = ({ onSearch }) => {
             >
               <option value="">Select Subcategory</option>
               {selectedCategoryObj?.subCategories.map((sub) => (
-                  <option key={sub.slug} value={sub.slug}>
-                    {sub.name}
-                  </option>
-                ))}
+                <option key={sub.slug} value={sub.slug}>
+                  {sub.name}
+                </option>
+              ))}
             </select>
           </div>
         )}
