@@ -1,8 +1,9 @@
 import React from 'react'
-
+import { Link } from 'react-router-dom';
 const ProviderCard = ({provider}) => {   
   return (
     <div>
+        <Link to={`/providers/${provider._id}`}>
         <div className="bg-white rounded-lg shadow p-4 space-y-2">
             {/*Business name*/}
             <div className="flex justify-between items-start">
@@ -44,6 +45,7 @@ const ProviderCard = ({provider}) => {
                 Coming Soon
             </button>
         </div>
+        </Link>
     </div>
   );
 };
