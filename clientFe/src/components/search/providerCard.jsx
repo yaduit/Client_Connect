@@ -1,10 +1,9 @@
-import React from 'react'
 import { Link } from 'react-router-dom';
 const ProviderCard = ({provider}) => {   
   return (
     <div>
         <Link to={`/providers/${provider._id}`}>
-        <div className="bg-white rounded-lg shadow p-4 space-y-2">
+        <div className="bg-white rounded-lg shadow p-4 space-y-2 hover:shadow-lg transition">
             {/*Business name*/}
             <div className="flex justify-between items-start">
                 <h3 className="text-lg font-semibold text-gray-800">

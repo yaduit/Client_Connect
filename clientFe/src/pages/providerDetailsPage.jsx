@@ -1,13 +1,22 @@
 import {useParams, Link} from 'react-router-dom';
-import { useProviderDetails } from '../hooks/useProviderDetails';
+import { useProviderDetails } from '../hooks/useProviderDetails.jsx';
+import ProviderDetailsSkeleton from '../components/providers/providerDetailsSkeleton.jsx';
 
 const ProviderDetailsPage = () => {
     const {id} = useParams();
     const{provider, loading, error} = useProviderDetails(id);
 
-    if(loading) return <p className='p-4'>Loading provider...</p>;
-    if(error) return <p className='p-4 text-red-600'>{error}</p>;
-    if(!provider) return null;
+    if(loading) return <ProviderDetailsSkeleton/>;
+    if(error){
+      return <div className="p-4 text-red-600">
+        Failed to load provider
+      </div>
+    }
+    if(!provider){
+      <div className='p-4 text-gray-600'>
+        Provider not found
+      </div>
+    }
 
     return (
       <div className="max-w-3xl mx-auto p-4 space-y-4">
