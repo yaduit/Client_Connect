@@ -51,8 +51,8 @@ const SearchForm = ({ onSearch }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     onSearch({
-      lat: lat.trim(),
-      lng: lng.trim(),
+      lat,
+      lng,
       radius,
       ...(selectedCategory && { categoryId: selectedCategory }),
       ...(selectedSubCategory && { subCategorySlug: selectedSubCategory }),
