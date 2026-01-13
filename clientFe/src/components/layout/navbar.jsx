@@ -1,15 +1,7 @@
 import { useState } from 'react';
-
+import { Link } from 'react-router-dom';
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  // Helper function for navigation - replace with React Router's Link when integrated
-  const handleNavClick = (e, path) => {
-    e.preventDefault();
-    console.log(`Navigate to: ${path}`);
-    setIsMobileMenuOpen(false);
-    // In production, replace with: navigate(path) or use <Link> from react-router-dom
-  };
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
@@ -18,33 +10,30 @@ const Navbar = () => {
           
           {/* Left section: Logo */}
           <div className="shrink-0">
-            <a 
-              href="/" 
+            <Link
+              to="/" 
               className="flex items-center"
-              onClick={(e) => handleNavClick(e, '/')}
             >
               <span className="text-xl font-bold text-(--color-primary)">
                 Client Connect
               </span>
-            </a>
+            </Link>
           </div>
 
           {/* Center section: Main navigation - hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-8">
-            <a 
-              href="/services" 
+            <Link 
+              to="/services" 
               className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-              onClick={(e) => handleNavClick(e, '/services')}
             >
               Services
-            </a>
-            <a 
-              href="/write-review" 
+            </Link>
+            <Link
+              to="/write-review" 
               className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-              onClick={(e) => handleNavClick(e, '/write-review')}
             >
               Write a Review
-            </a>
+            </Link>
             
             {/* Location selector placeholder */}
             <button 
@@ -70,39 +59,35 @@ const Navbar = () => {
 
           {/* Right section: Auth links and CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            <a 
-              href="/login" 
+            <Link
+              to="/login" 
               className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-              onClick={(e) => handleNavClick(e, '/login')}
             >
               Login
-            </a>
-            <a 
-              href="/signup" 
+            </Link>
+            <Link
+              to="/signup" 
               className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-              onClick={(e) => handleNavClick(e, '/signup')}
             >
               Signup
-            </a>
-            <a
-              href="/become-provider"
+            </Link>
+            <Link
+              to="/become-provider"
               className="px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-sm"
-              onClick={(e) => handleNavClick(e, '/become-provider')}
             >
               Become a Provider
-            </a>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-3">
             {/* CTA always visible on mobile */}
-            <a
-              href="/become-provider"
+            <Link
+              to="/become-provider"
               className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm"
-              onClick={(e) => handleNavClick(e, '/become-provider')}
             >
               Provider
-            </a>
+            </Link>
             
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -128,20 +113,18 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="lg:hidden border-t border-gray-100 bg-white">
           <div className="px-4 pt-2 pb-4 space-y-3">
-            <a 
-              href="/services" 
+            <Link 
+              to="/services" 
               className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-              onClick={(e) => handleNavClick(e, '/services')}
             >
               Services
-            </a>
-            <a 
-              href="/write-review" 
+            </Link>
+            <Link 
+              to="/write-review" 
               className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-              onClick={(e) => handleNavClick(e, '/write-review')}
             >
               Write a Review
-            </a>
+            </Link>
             
             <button 
               className="flex items-center py-2 text-gray-700 hover:text-green-600 transition-colors w-full"
@@ -164,20 +147,18 @@ const Navbar = () => {
             </button>
 
             <div className="pt-3 border-t border-gray-100 space-y-3">
-              <a 
-                href="/login" 
+              <Link 
+                to="/login" 
                 className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-                onClick={(e) => handleNavClick(e, '/login')}
               >
                 Login
-              </a>
-              <a 
-                href="/signup" 
+              </Link>
+              <Link
+                to="/signup" 
                 className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-                onClick={(e) => handleNavClick(e, '/signup')}
               >
                 Signup
-              </a>
+              </Link>
             </div>
           </div>
         </div>
