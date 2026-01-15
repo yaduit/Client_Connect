@@ -1,5 +1,5 @@
 import React from 'react'
-import ProviderCard from './providerCard.jsx';
+import ProviderCard from '../providers/providerCard.jsx';
 
 const SearchResults = ({
   providers,
