@@ -61,12 +61,12 @@ const HeroSection = () => {
                 value={service}
                 onChange={(e) => setService(e.target.value)}
                 placeholder="Plumbers, electricians, cleaners..."
-                className="flex-1 px-4 py-3 rounded-md border focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="flex-1 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
                 aria-label="Service search"
               />
 
               {/* Location input */}
-              <div className="flex flex-1 items-center border rounded-md px-3">
+              <div className="flex flex-1 items-center border border-gray-300 rounded-md px-3">
                 <input
                   type="text"
                   value={location}
