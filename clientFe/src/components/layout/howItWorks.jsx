@@ -59,8 +59,8 @@ const HowItWorks = () => {
         {/* Steps Row */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-center gap-8 sm:gap-6 lg:gap-12">
           {steps.map((step, index) => (
-            <>
-              <div key={step.number} className="flex items-start sm:flex-col sm:items-center gap-4 sm:gap-3 flex-1 max-w-xs">
+            <div key={step.number} className="contents">
+              <div className="flex items-start sm:flex-col sm:items-center gap-4 sm:gap-3 flex-1 max-w-xs">
                 {/* Icon and Number */}
                 <div className="shrink-0 relative">
                   <div className="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center text-green-600">
@@ -84,13 +84,13 @@ const HowItWorks = () => {
 
               {/* Arrow Between Steps - Desktop Only */}
               {index < steps.length - 1 && (
-                <div key={`arrow-${index}`} className="hidden sm:flex items-center text-gray-300 shrink-0">
+                <div className="hidden sm:flex items-center text-gray-300 shrink-0">
                   <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
                   </svg>
                 </div>
               )}
-            </>
+            </div>
           ))}
         </div>
 
