@@ -22,7 +22,7 @@ const  SubCategoryGrid = ({subCategories, onSelect}) => {
                             View Providers
                         </p>
                     </button>
-                ))};
+                ))}
             </div>
         </div>
     )

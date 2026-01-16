@@ -1,5 +1,13 @@
+import { useNavigate } from "react-router-dom";
+
 const CategoryGrid = () => {
-  // Mock category data - replace with API call in production
+  
+  const navigate = useNavigate();
+
+  const handleCategoryClick = (slug) => {
+    console.log('Navigate to category:', slug);
+    navigate(`/categories/${slug}`);
+  };
   const categories = [
     {
       id: 1,
@@ -135,10 +143,7 @@ const CategoryGrid = () => {
     }
   ];
 
-  const handleCategoryClick = (slug) => {
-    console.log('Navigate to category:', slug);
-    // Replace with: navigate(`/categories/${slug}`) when using React Router
-  };
+  
 
   return (
     <section className="bg-gray-50 py-16 sm:py-20 lg:py-24">
