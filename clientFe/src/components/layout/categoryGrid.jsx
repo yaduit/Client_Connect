@@ -1,13 +1,7 @@
-import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 const CategoryGrid = () => {
   
-  const navigate = useNavigate();
 
-  const handleCategoryClick = (slug) => {
-    console.log('Navigate to category:', slug);
-    navigate(`/categories/${slug}`);
-  };
   const categories = [
     {
       id: 1,
@@ -162,9 +156,9 @@ const CategoryGrid = () => {
         {/* Category Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
           {categories.map((category) => (
-            <button
+            <Link
+              to={`/categories/${category.slug}`}
               key={category.id}
-              onClick={() => handleCategoryClick(category.slug)}
               className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1 border border-gray-100 hover:border-green-500 text-left group focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
               aria-label={`Browse ${category.name}`}
             >
@@ -182,7 +176,7 @@ const CategoryGrid = () => {
               <p className="text-xs sm:text-sm text-gray-500 line-clamp-2">
                 {category.subtitle}
               </p>
-            </button>
+            </Link>
           ))}
         </div>
 
