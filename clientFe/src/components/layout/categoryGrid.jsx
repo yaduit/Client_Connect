@@ -48,17 +48,6 @@ const CategoryGrid = () => {
       )
     },
     {
-      id: 5,
-      name: 'Construction & Infrastructure',
-      slug: 'construction-infrastructure',
-      subtitle: 'Building, renovation, civil work',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-        </svg>
-      )
-    },
-    {
       id: 6,
       name: 'Art, Education & Creative',
       slug: 'art-education-creative',
@@ -92,17 +81,6 @@ const CategoryGrid = () => {
       )
     },
     {
-      id: 9,
-      name: 'Legal & Financial',
-      slug: 'legal-financial',
-      subtitle: 'Lawyers, accountants, advisors',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-        </svg>
-      )
-    },
-    {
       id: 10,
       name: 'Food & Catering',
       slug: 'food-catering',
@@ -113,28 +91,8 @@ const CategoryGrid = () => {
         </svg>
       )
     },
-    {
-      id: 11,
-      name: 'Beauty & Personal Care',
-      slug: 'beauty-personal-care',
-      subtitle: 'Salons, spa, grooming',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-        </svg>
-      )
-    },
-    {
-      id: 12,
-      name: 'Pet Services',
-      slug: 'pet-services',
-      subtitle: 'Grooming, training, veterinary',
-      icon: (
-        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5" />
-        </svg>
-      )
-    }
+    
+    
   ];
 
   
@@ -154,7 +112,7 @@ const CategoryGrid = () => {
         </div>
 
         {/* Category Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 sm:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
           {categories.map((category) => (
             <Link
               to={`/categories/${category.slug}`}
