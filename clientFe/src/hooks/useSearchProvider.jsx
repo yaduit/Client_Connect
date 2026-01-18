@@ -10,20 +10,29 @@ export const useSearchProviders = () => {
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
 
-  const fetchProviders = async (filters, resetPage = false) => {
+  const hasValidFilters = (filters) => {
+    return (
+      (filters.lat && filters.lng) ||
+      filters.categoryId ||
+      filters.subCategorySlug
+    );
+  };
+
+  const search = async (filters, pageNumber = 1, reset = false) => {
     try {
       setLoading(true);
       setError(null);
 
       const data = await searchProvidersApi({
         ...filters,
-        page
+        page: pageNumber
       });
 
-      setProviders(prev =>
-        resetPage || page === 1 ? data.providers : [...prev, ...data.providers]
+      setProviders((prev) =>
+        reset || pageNumber === 1
+          ? data.providers
+          : [...prev, ...data.providers]
       );
-
     } catch (err) {
       setError(err.message || "Search failed");
     } finally {
@@ -43,10 +52,10 @@ export const useSearchProviders = () => {
       sort: params.get("sort")
     };
 
-    // reset providers when filters change
+    if (!hasValidFilters(filters)) return;
+
     setPage(1);
-    fetchProviders(filters, true);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    search(filters, 1, true);
   }, [location.search]);
 
   return {
@@ -55,6 +64,6 @@ export const useSearchProviders = () => {
     error,
     page,
     setPage,
-    fetchProviders
+    search
   };
 };

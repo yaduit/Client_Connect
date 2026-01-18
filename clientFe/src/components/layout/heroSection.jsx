@@ -1,16 +1,21 @@
 import { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 const HeroSection = () => {
   const [service, setService] = useState("");
   const [location, setLocation] = useState("");
   const [detectingLocation, setDetectingLocation] = useState(false);
+  const navigate = useNavigate();
 
   const handleSearch = () => {
     if (!service && !location) return;
 
     console.log("Search:", { service, location });
-    // later:
-    // navigate(`/search?service=${service}&location=${location}`)
+    const params = new URLSearchParams();
+
+    if(service) params.append("service", service);
+    if(location) params.append("location", location);
+
+    navigate(`/search?${params.toString()}`);
   };
 
   const handleUseLocation = () => {
