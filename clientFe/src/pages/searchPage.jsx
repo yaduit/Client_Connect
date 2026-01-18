@@ -1,14 +1,20 @@
-import SearchResuts from '../components/search/searchResuts.jsx';
 import SearchForm from '../components/search/searchForm.jsx'
-import { useSearchProviders } from '../hooks/useSearchProvider.jsx';
+import SearchResults from "../components/search/searchResuts.jsx"
+import { useSearchProviders } from "../hooks/useSearchProvider.jsx";
 
 const SearchPage = () => {
-  const searchState = useSearchProviders();
+  const { providers, loading, error, page, setPage } = useSearchProviders();
 
   return (
     <div className="max-w-7xl mx-auto p-4">
-      <SearchForm onSearch={searchState.search} />
-      <SearchResuts {...searchState} />
+      <SearchForm />
+      <SearchResults
+        providers={providers}
+        loading={loading}
+        error={error}
+        page={page}
+        setPage={setPage}
+      />
     </div>
   );
 };
