@@ -5,8 +5,9 @@ import { useCategories } from "../../hooks/useCategories";
 const SearchForm = () => {
   const navigate = useNavigate();
 
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
+  const [locationText, setLocationText] = useState("");
+  const [coords, setCoords] = useState(null);
+
   const [radius, setRadius] = useState(10);
   const [sort, setSort] = useState("distance");
   const [selectedCategory, setSelectedCategory] = useState("");
@@ -16,8 +17,32 @@ const SearchForm = () => {
 
   const { categories, loading: categoriesLoading } = useCategories();
   const selectedCategoryObj = categories.find(
-    (cat) => cat._id === selectedCategory
+    (cat) => cat._id === selectedCategory,
   );
+
+  const resolveLocationToCoords = async (place) => {
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`,
+    {
+      headers: {
+        "Accept": "application/json",
+        "User-Agent": "service-finder-app",
+      },
+    }
+  );
+
+  const data = await res.json();
+
+  if (!data.length) {
+    throw new Error("Location not found");
+  }
+
+  return {
+    lat: Number(data[0].lat),
+    lng: Number(data[0].lon),
+  };
+};
+
 
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) {
@@ -28,34 +53,53 @@ const SearchForm = () => {
     setLocationError(null);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        setLat(position.coords.latitude);
-        setLng(position.coords.longitude);
+       setCoords({
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+       });
+        setLocationText("Current Location")
         setLocating(false);
       },
       (error) => {
         setLocationError("Failed to get location");
         setLocating(false);
-      }
+      },
     );
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    let finalCoords = coords;
+
+    if (!finalCoords && locationText) {
+      finalCoords = await resolveLocationToCoords(locationText);
+      setCoords(finalCoords);
+    }
+
+    if (!finalCoords) {
+      setLocationError("Please provide a location");
+      return;
+    }
 
     const searchParams = new URLSearchParams();
-
-    if (lat) searchParams.set("lat", lat);
-    if (lng) searchParams.set("lng", lng);
-    if (radius) searchParams.set("radius", radius);
-
-    if (selectedCategory) searchParams.set("categoryId", selectedCategory);
-    if (selectedSubCategory)
-      searchParams.set("subCategorySlug", selectedSubCategory);
-
+    searchParams.set("lat", finalCoords.lat);
+    searchParams.set("lng", finalCoords.lng);
+    searchParams.set("radius", radius);
     searchParams.set("sort", sort);
 
+    if (selectedCategory) searchParams.set("categoryId", selectedCategory);
+    if (selectedSubCategory) {
+      searchParams.set("subCategorySlug", selectedSubCategory);
+    }
+
     navigate(`/search?${searchParams.toString()}`);
-  };
+  } catch (err) {
+    setLocationError(err.message);
+  }
+};
+
 
   return (
     <div>
@@ -63,9 +107,7 @@ const SearchForm = () => {
         onSubmit={handleSubmit}
         className="bg-white rounded-lg shadow p-4 mb-6 py-4"
       >
-        <h4 className="text-lg font-semibold text-gray-800">
-          Search Services
-        </h4>
+        <h4 className="text-lg font-semibold text-gray-800">Search Services</h4>
 
         <button
           type="button"
@@ -79,26 +121,21 @@ const SearchForm = () => {
           <p className="text-sm text-red-600">{locationError}</p>
         )}
 
-        {/* Latitude & Longitude Inputs */}
+        {/* Location input*/}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input
-            type="number"
-            step="any"
-            placeholder="Latitude"
-            value={lat}
-            onChange={(e) => setLat(e.target.value)}
-            className="border rounded px-3 py-2 w-full"
-            required
-          />
-          <input
-            type="number"
-            step="any"
-            placeholder="Longitude"
-            value={lng}
-            onChange={(e) => setLng(e.target.value)}
-            className="border rounded px-3 py-2 w-full"
-            required
-          />
+            <input
+              type="text"
+              placeholder="City, area, or place"
+              value={locationText}
+              onChange={
+                (e) => {
+                  setLocationText(e.target.value)
+                  setCoords(null);
+                }
+              }
+              className="border rounded px-3 py-2 w-full"
+            />
+
         </div>
 
         {/* Radius */}
@@ -120,9 +157,7 @@ const SearchForm = () => {
 
         {/* Category */}
         <div>
-          <label className="block text-sm text-gray-600 mb-1">
-            Category
-          </label>
+          <label className="block text-sm text-gray-600 mb-1">Category</label>
           <select
             value={selectedCategory}
             disabled={categoriesLoading}
@@ -133,9 +168,7 @@ const SearchForm = () => {
             className="border rounded px-3 py-2 w-full"
           >
             <option value="">
-              {categoriesLoading
-                ? "Loading categories..."
-                : "Select category"}
+              {categoriesLoading ? "Loading categories..." : "Select category"}
             </option>
             {categories.map((cat) => (
               <option key={cat._id} value={cat._id}>
@@ -169,9 +202,7 @@ const SearchForm = () => {
 
         {/* Sort */}
         <div>
-          <label className="block text-sm text-gray-600 mb-1">
-            Sort by
-          </label>
+          <label className="block text-sm text-gray-600 mb-1">Sort by</label>
           <select
             value={sort}
             onChange={(e) => setSort(e.target.value)}
