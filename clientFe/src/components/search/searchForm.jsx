@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useCategories } from "../../hooks/useCategories";
-import { useSearchParams } from "react-router-dom";
+
 const SearchForm = () => {
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
   const initialLat = searchParams.get("lat");
   const initialLng = searchParams.get("lng");
+  const initialLabel = searchParams.get("label");
+
   const [coords, setCoords] = useState(
     initialLat && initialLng
     ? {lat: Number(initialLat), lng: Number(initialLng)}
@@ -31,6 +33,7 @@ const SearchForm = () => {
     (cat) => cat._id === selectedCategory,
   );
 
+        {/*Forward Geocoding */}
   const resolveLocationToCoords = async (place) => {
   const res = await fetch(
     `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`,
@@ -51,24 +54,39 @@ const SearchForm = () => {
   return {
     lat: Number(data[0].lat),
     lng: Number(data[0].lon),
+    label: place,
   };
 };
 
+      {/*Reverse GeoCoding */}
+
+      const reverseGeocode = async (lat,lng) => {
+        const res = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+        );
+        const data = await res.json();
+        return(
+          data.address?.city ||
+          data.address?.town ||
+          data.address?.village ||
+          "Nearby Location"
+        );
+      };
 
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) {
-      setLocationError("Geolocation is not supported by your browser");
+      setLocationError("Geolocation is not supported");
       return;
     }
     setLocating(true);
     setLocationError(null);
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-       setCoords({
-        lat: position.coords.latitude,
-        lng: position.coords.longitude
-       });
-        setLocationText("Current Location")
+      async (position) => {
+       const lat = position.coords.latitude;
+       const lng = position.coords.longitude;
+       const label = await reverseGeocode(lat,lng);
+        setCoords({lat,lng});
+        setLocationText(label)
         setLocating(false);
       },
       () => {
@@ -105,6 +123,7 @@ const SearchForm = () => {
     const searchParams = new URLSearchParams();
     searchParams.set("lat", finalCoords.lat);
     searchParams.set("lng", finalCoords.lng);
+    searchParams.set("label", locationText);
     searchParams.set("radius", radius);
     searchParams.set("sort", sort);
 
