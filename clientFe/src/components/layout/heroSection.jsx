@@ -21,11 +21,24 @@ const HeroSection = () => {
   const handleUseLocation = () => {
     setDetectingLocation(true);
 
-    // later replace with navigator.geolocation
-    setTimeout(() => {
-      setLocation("Current location");
-      setDetectingLocation(false);
-    }, 1000);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+
+        const params = new URLSearchParams();
+        params.append("lat", lat);
+        params.append("lng", lng);
+
+        setDetectingLocation(false);
+        navigate(`/search?${params.toString()}`);
+      },
+      ()=>{
+        setDetectingLocation(false);
+        alert('Failed to detect Location');
+      }
+    )
+   
   };
 
   return (
