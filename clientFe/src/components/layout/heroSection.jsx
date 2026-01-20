@@ -6,39 +6,85 @@ const HeroSection = () => {
   const [detectingLocation, setDetectingLocation] = useState(false);
   const navigate = useNavigate();
 
-  const handleSearch = () => {
+  const reverseGeocode = async (lat, lng) => {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+    );
+    const data = await res.json();
+    return (
+      data.address?.city ||
+      data.address?.town ||
+      data.address?.village ||
+      "Nearby Location"
+    );
+  };
+
+  const resolveLocationToCoords = async (place) => {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`,
+      {
+        headers: {
+          "Accept": "application/json",
+          "User-Agent": "service-finder-app",
+        },
+      }
+    );
+    const data = await res.json();
+    if (!data.length) {
+      throw new Error("Location not found");
+    }
+    return {
+      lat: Number(data[0].lat),
+      lng: Number(data[0].lon),
+    };
+  };
+
+  const handleSearch = async () => {
     if (!service && !location) return;
 
-    console.log("Search:", { service, location });
-    const params = new URLSearchParams();
+    try {
+      const coords = await resolveLocationToCoords(location);
 
-    if(service) params.append("service", service);
-    if(location) params.append("location", location);
+      const params = new URLSearchParams();
+      params.append("lat", coords.lat);
+      params.append("lng", coords.lng);
+      params.append("label", location);
+      params.append("radius", 10);
+      params.append("sort", "distance");
 
-    navigate(`/search?${params.toString()}`);
+      if (service) params.append("service", service);
+
+      navigate(`/search?${params.toString()}`);
+    } catch (err) {
+      alert(err.message);
+    }
   };
 
   const handleUseLocation = () => {
     setDetectingLocation(true);
 
     navigator.geolocation.getCurrentPosition(
-      (position) => {
+      async (position) => {
         const lat = position.coords.latitude;
         const lng = position.coords.longitude;
+        const label = await reverseGeocode(lat, lng);
 
+        setLocation(label);
         const params = new URLSearchParams();
         params.append("lat", lat);
         params.append("lng", lng);
+        params.append("label", label);
+        params.append("radius", 10);
+        params.append("sort", "distance");
 
         setDetectingLocation(false);
         navigate(`/search?${params.toString()}`);
       },
-      ()=>{
+      () => {
         setDetectingLocation(false);
-        alert('Failed to detect Location');
+        alert("Failed to detect Location");
       }
-    )
-   
+    );
   };
 
   return (
@@ -81,6 +127,7 @@ const HeroSection = () => {
                 placeholder="Plumbers, electricians, cleaners..."
                 className="flex-1 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
                 aria-label="Service search"
+                required
               />
 
               {/* Location input */}
@@ -96,6 +143,7 @@ const HeroSection = () => {
                   }
                   className="w-full py-3 focus:outline-none"
                   aria-label="Location"
+                  required
                 />
                 <button
                   type="button"

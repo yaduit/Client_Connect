@@ -15,11 +15,7 @@ const SearchForm = () => {
     ? {lat: Number(initialLat), lng: Number(initialLng)}
     : null
   );
-  const [locationText, setLocationText] = useState(
-    initialLat && initialLng
-    ? "Detected location"
-    : ""
-  );
+  const [locationText, setLocationText] = useState(initialLabel || "");
 
   const [radius, setRadius] = useState(10);
   const [sort, setSort] = useState("distance");
