@@ -43,10 +43,26 @@ export const useSearchProviders = () => {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
 
+    let lat = params.get('lat');
+    let lng = params.get('lng');
+    if(!lat || !lng){
+      const saved = JSON.parse(localStorage.getItem("lastLocation"));
+      if(saved){
+        lat = saved.lat;
+        lng = saved.lng;
+      }
+    }
+
+    if(!lat || !lng){
+      setError('Please provide a location to see nearby providers');
+      setProviders([]);
+      return;
+    }
+
     const filters = {
-      lat: params.get("lat"),
-      lng: params.get("lng"),
-      radius: params.get("radius"),
+      lat,
+      lng,
+      radius: params.get("radius") || 10,
       categoryId: params.get("categoryId"),
       subCategorySlug: params.get("subCategorySlug"),
       sort: params.get("sort")
