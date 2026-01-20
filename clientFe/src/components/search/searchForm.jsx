@@ -1,12 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCategories } from "../../hooks/useCategories";
-
+import { useSearchParams } from "react-router-dom";
 const SearchForm = () => {
   const navigate = useNavigate();
 
-  const [locationText, setLocationText] = useState("");
-  const [coords, setCoords] = useState(null);
+  const [searchParams] = useSearchParams();
+  const initialLat = searchParams.get("lat");
+  const initialLng = searchParams.get("lng");
+  const [coords, setCoords] = useState(
+    initialLat && initialLng
+    ? {lat: Number(initialLat), lng: Number(initialLng)}
+    : null
+  );
+  const [locationText, setLocationText] = useState(
+    initialLat && initialLng
+    ? "Detected location"
+    : ""
+  );
 
   const [radius, setRadius] = useState(10);
   const [sort, setSort] = useState("distance");
@@ -60,7 +71,7 @@ const SearchForm = () => {
         setLocationText("Current Location")
         setLocating(false);
       },
-      (error) => {
+      () => {
         setLocationError("Failed to get location");
         setLocating(false);
       },
@@ -81,7 +92,15 @@ const SearchForm = () => {
     if (!finalCoords) {
       setLocationError("Please provide a location");
       return;
-    }
+    };
+
+    localStorage.setItem(
+      "lastLocation",
+      JSON.stringify({
+        lat: finalCoords.lat,
+        lng: finalCoords.lng,
+      })
+    );
 
     const searchParams = new URLSearchParams();
     searchParams.set("lat", finalCoords.lat);
