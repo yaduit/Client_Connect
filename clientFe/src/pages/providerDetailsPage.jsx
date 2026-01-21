@@ -13,7 +13,7 @@ const ProviderDetailsPage = () => {
       </div>
     }
     if(!provider){
-      <div className='p-4 text-gray-600'>
+      return <div className='p-4 text-gray-600'>
         Provider not found
       </div>
     }
@@ -31,7 +31,7 @@ const ProviderDetailsPage = () => {
           </p>
           <p className="text-gray-700">{provider.description}</p>
           <p className="text-gray-600">
-            📍 {provider.location.city}, {provider.location.state}
+            📍 {provider.location?.city}, {provider.location?.state}
           </p>
           {provider.ratingAverage > 0 && (
             <p className='text-yellow-600 font-medium'>
