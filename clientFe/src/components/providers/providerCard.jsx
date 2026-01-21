@@ -1,50 +1,53 @@
-import { Link } from 'react-router-dom';
-const ProviderCard = ({provider}) => {   
+import { useNavigate } from "react-router-dom";
+
+const ProviderCard = ({ provider }) => {
+  const navigate = useNavigate();
+
+  const distanceKm = provider.distance
+    ? (provider.distance / 1000).toFixed(1)
+    : null;
+
   return (
-    <div>
-        <Link to={`/providers/${provider._id}`}>
-        <div className="bg-white rounded-lg shadow p-4 space-y-2 hover:shadow-lg transition">
-            {/*Business name*/}
-            <div className="flex justify-between items-start">
-                <h3 className="text-lg font-semibold text-gray-800">
-                    {provider.businessName}
-                </h3>
-                {provider.ratingAverage > 0 &&(
-                    <span className='text-sm text-yellow-600 font-medium'>
-                        ⭐{provider.ratingAverage.toFixed(1)}
-                    </span>
-                )}
-            </div>
-            {/* category */}
-            {provider.categoryId?.name && (
-                <p className="text-sm text-gray-500">
-                    {provider.categoryId.name}
-                </p>
-            )}
+    <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition">
+      
+      {/* Header */}
+      <div className="flex justify-between items-start mb-2">
+        <h3 className="text-lg font-bold text-gray-900">
+          {provider.businessName}
+        </h3>
 
-            {/* location */}
-            <p className="text-sm text-gray-600">
-                📍{provider.location?.city},{provider.location?.state}
-            </p>
+        {provider.ratingAverage > 0 && (
+          <div className="text-sm text-yellow-600 font-semibold">
+            ⭐ {provider.ratingAverage.toFixed(1)}
+            <span className="text-gray-500 font-normal">
+              {" "}({provider.totalReviews})
+            </span>
+          </div>
+        )}
+      </div>
 
-             {/* Distance */}
-            <p className="text-sm text-gray-600">
-                📏 {provider.distanceKm} km away
-            </p>
+      {/* Category */}
+      <div className="inline-block text-xs font-medium bg-green-100 text-green-700 px-2 py-1 rounded mb-3">
+        {provider.categoryId?.name} • {provider.subCategorySlug}
+      </div>
 
-            {/* Description */}
-            {provider.description && (
-                <p className="text-sm text-gray-700 line-clamp-2">
-                {provider.description}
-                </p>
-            )}
+      {/* Location */}
+      <div className="text-sm text-gray-600 mb-4">
+        📍 {provider.location?.city}, {provider.location?.state}
+        {distanceKm && (
+          <span className="ml-2 text-gray-500">
+            • {distanceKm} km away
+          </span>
+        )}
+      </div>
 
-            {/* Future action */}
-            <button disabled className='mt-2 text-sm text-green-600 font-medium cursor-not-allowed'>
-                Coming Soon
-            </button>
-        </div>
-        </Link>
+      {/* CTA */}
+      <button
+        onClick={() => navigate(`/providers/${provider._id}`)}
+        className="text-green-600 font-semibold hover:underline"
+      >
+        View details →
+      </button>
     </div>
   );
 };
