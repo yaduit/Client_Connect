@@ -9,6 +9,8 @@ const SearchForm = () => {
   const initialLat = searchParams.get("lat");
   const initialLng = searchParams.get("lng");
   const initialLabel = searchParams.get("label");
+  const initialCategoryId = searchParams.get("categoryId");
+  const initialSubCategorySlug = searchParams.get("subCategorySlug");
 
   const [coords, setCoords] = useState(
     initialLat && initialLng
@@ -19,8 +21,8 @@ const SearchForm = () => {
 
   const [radius, setRadius] = useState(10);
   const [sort, setSort] = useState("distance");
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedSubCategory, setSelectedSubCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState(initialCategoryId || "");
+  const [selectedSubCategory, setSelectedSubCategory] = useState(initialSubCategorySlug || "");
   const [locating, setLocating] = useState(false);
   const [locationError, setLocationError] = useState(null);
 
@@ -28,6 +30,10 @@ const SearchForm = () => {
   const selectedCategoryObj = categories.find(
     (cat) => cat._id === selectedCategory,
   );
+
+  // Check if category/subcategory are pre-selected from URL
+  const hasPreSelectedCategory = !!initialCategoryId;
+  const hasPreSelectedSubCategory = !!initialSubCategorySlug;
 
         {/*Forward Geocoding */}
   const resolveLocationToCoords = async (place) => {
@@ -189,31 +195,33 @@ const SearchForm = () => {
           </select>
         </div>
 
-        {/* Category */}
-        <div>
-          <label className="block text-sm text-gray-600 mb-1">Category</label>
-          <select
-            value={selectedCategory}
-            disabled={categoriesLoading}
-            onChange={(e) => {
-              setSelectedCategory(e.target.value);
-              setSelectedSubCategory("");
-            }}
-            className="border rounded px-3 py-2 w-full"
-          >
-            <option value="">
-              {categoriesLoading ? "Loading categories..." : "Select category"}
-            </option>
-            {categories.map((cat) => (
-              <option key={cat._id} value={cat._id}>
-                {cat.name}
+        {/* Category - Only show if not pre-selected */}
+        {!hasPreSelectedCategory && (
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Category</label>
+            <select
+              value={selectedCategory}
+              disabled={categoriesLoading}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value);
+                setSelectedSubCategory("");
+              }}
+              className="border rounded px-3 py-2 w-full"
+            >
+              <option value="">
+                {categoriesLoading ? "Loading categories..." : "Select category"}
               </option>
-            ))}
-          </select>
-        </div>
+              {categories.map((cat) => (
+                <option key={cat._id} value={cat._id}>
+                  {cat.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
 
-        {/* Subcategory */}
-        {selectedCategory && (
+        {/* Subcategory - Only show if category is selected and not pre-selected */}
+        {selectedCategory && !hasPreSelectedSubCategory && (
           <div>
             <label className="block text-sm text-gray-600 mb-1">
               SubCategory
