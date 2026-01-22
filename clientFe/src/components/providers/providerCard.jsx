@@ -1,14 +1,12 @@
-import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 const ProviderCard = ({ provider }) => {
-  const navigate = useNavigate();
-
   const distanceKm = provider.distance
     ? (provider.distance / 1000).toFixed(1)
     : null;
 
   return (
-    <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition">
+    <Link to={`/providers/${provider._id}`} className="block">
+      <div className="bg-white border rounded-xl p-5 shadow-sm hover:shadow-md transition">
       
       {/* Header */}
       <div className="flex justify-between items-start mb-2">
@@ -42,13 +40,11 @@ const ProviderCard = ({ provider }) => {
       </div>
 
       {/* CTA */}
-      <button
-        onClick={() => navigate(`/providers/${provider._id}`)}
-        className="text-green-600 font-semibold hover:underline"
-      >
+      <div className="text-green-600 font-semibold hover:underline">
         View details →
-      </button>
-    </div>
+      </div>
+      </div>
+    </Link>
   );
 };
 
