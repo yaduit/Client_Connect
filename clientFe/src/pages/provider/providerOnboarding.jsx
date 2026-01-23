@@ -1,4 +1,4 @@
-import ProviderForm from "../../components/providers/providerForm,jsx";
+import ProviderForm from "../../components/providers/providerForm.jsx";
 
 const ProviderOnboarding = () => {
   return (
