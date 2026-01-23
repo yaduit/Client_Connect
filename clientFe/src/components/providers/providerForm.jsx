@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCategories } from "../../hooks/useCategories";
-import { registerProviderApi } from "../../api/provider.api";
+import { registerProviderApi } from "../../api/provider.api.js";
 
 const ProviderForm = () => {
   const { categories } = useCategories();

@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getProviderByIdApi } from "../../api/provide.api.js";
+import { getProviderByIdApi } from "../../api/provider.api.js";
 import ProviderDetailsSkeleton from "../../components/providers/providerDetailsSkeleton.jsx";
 const ProviderDetails = () => {
   const { id } = useParams();
