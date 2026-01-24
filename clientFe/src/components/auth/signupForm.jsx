@@ -1,78 +1,57 @@
 import { useState } from "react";
+import { SignupApi } from "../../api/auth.api";
+import { useNavigate } from "react-router-dom";
 
-const SignupForm = ({ redirect }) => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [role, setRole] = useState("seeker");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // TEMP – backend wiring comes next
-    console.log("Signup submit", {
-      name,
-      email,
-      password,
-      role,
-      redirect,
+const SignupForm = () => {
+    const navigate = useNavigate();
+    const[form, setForm] = useState({
+        name: "",
+        email:"",
+        password:"",
+        role:"seeker",
     });
 
-    // later:
-    // 1. POST /auth/signup
-    // 2. auto-login
-    // 3. redirect
-  };
+  const[loading, setLoading] = useState(false);
+  const[error, setError] = useState(null);
+
+  const handleChange = (e) => {
+    setForm({...form, [e.target.name]:e.target.value});
+  }
+  const handleSubmit = async(e) => {
+    e.preventDefault();
+    try{
+        setLoading(true);
+        setError(null);
+
+        const data = await SignupApi(form);
+
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        navigate("/")
+    }catch(err){
+        setError(err.response?.data?.message|| "Signup failed");
+    }finally{
+        setLoading(false)
+    }
+    };
+  
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <input
-        type="text"
-        required
-        placeholder="Full name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="w-full border rounded px-3 py-2"
-      />
+    <form onSubmit={handleSubmit}>
+      <input name="name" onChange={handleChange} placeholder="Name" />
+      <input name="email" onChange={handleChange} placeholder="Email" />
+      <input name="password" type="password" onChange={handleChange} placeholder="Password" />
 
-      <input
-        type="email"
-        required
-        placeholder="Email address"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="w-full border rounded px-3 py-2"
-      />
+      <select name="role" onChange={handleChange}>
+        <option value="seeker">User</option>
+        <option value="provider">Provider</option>
+      </select>
 
-      <input
-        type="password"
-        required
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="w-full border rounded px-3 py-2"
-      />
+      {error && <p className="text-red-500">{error}</p>}
 
-      {/* Role selection */}
-      <div>
-        <label className="block text-sm text-gray-600 mb-1">
-          I want to
-        </label>
-        <select
-          value={role}
-          onChange={(e) => setRole(e.target.value)}
-          className="w-full border rounded px-3 py-2"
-        >
-          <option value="seeker">Find services</option>
-          <option value="provider">Offer services</option>
-        </select>
-      </div>
-
-      <button
-        type="submit"
-        className="w-full bg-green-600 text-white py-2 rounded font-semibold hover:bg-green-700"
-      >
-        Create account
+      <button disabled={loading}>
+        {loading ? "Creating account..." : "Signup"}
       </button>
     </form>
   );
