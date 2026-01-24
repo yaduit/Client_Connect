@@ -1,45 +1,55 @@
-import {useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AuthContext } from "./authContext.js";
 
- const AuthProvider = ({children}) => {
-    const[user, setUser] = useState(null);
-    const[loading, setLoading] = useState(true);
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null); 
+  const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const token = localStorage.getItem("token")
+  // 🔁 restore login on refresh
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
 
-        if(!token){
-            setLoading(false);
-            return;
-        }
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
 
-        try{
-            //simple version//
-            const payload = JSON.parse(atob(token.split(".")[1]));
+    setLoading(false);
+  }, []);
 
-            setUser({
-                id: payload.id,
-                role: payload.role,
-                email: payload.email
-            });
-        }catch(err){
-            console.error("Invalid token");
-            localStorage.removeItem("token")
-        }finally{
-            setLoading(false)
-        }
-    },[]);
+  // ✅ login handler
+  const login = ({ token, user }) => {
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    setToken(token);
+    setUser(user);
+  };
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        setUser(null)
-    };
+  // 🚪 logout handler
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setToken(null);
+    setUser(null);
+  };
 
-    return(
-        <AuthContext.Provider value={{user, setUser, logout, loading}}>
-            {children}
-        </AuthContext.Provider>
-    );
+  const value = {
+    user,
+    token,
+    isAuthenticated: !!token,
+    login,
+    logout,
+  };
+
+  if (loading) {
+    return <div className="p-6 text-center">Loading...</div>;
+  }
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
-
-export default AuthProvider;

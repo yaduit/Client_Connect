@@ -5,7 +5,7 @@ import { useAuth } from "../../context/auth/useAuth";
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, loading } = useAuth();
+  const { user, loading, isAuthenticated, logout } = useAuth();
 
   const handleBecomeProvider = () => {
 
@@ -86,25 +86,56 @@ const Navbar = () => {
 
           {/* Right section: Auth links and CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            <Link
-              to="/login"
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-            >
-              Login
-            </Link>
-            <Link
-              to="/signup"
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-            >
-              Signup
-            </Link>
-            <button
-              onClick={handleBecomeProvider}
-              disabled={loading}
-              className="px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-sm"
-            >
-              Become a Provider
-            </button>
+            {!isAuthenticated ? (
+              <>
+                <Link
+                  to="/login"
+                  className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                >
+                  Login
+                </Link>
+                <Link
+                  to="/signup"
+                  className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                >
+                  Signup
+                </Link>
+              </>
+            ) : (
+              <>
+                {user?.role === "provider" && (
+                  <Link
+                    to="/provider/dashboard"
+                    className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                  >
+                    Dashboard
+                  </Link>
+                )}
+                {user?.role === "admin" && (
+                  <Link
+                    to="/admin/dashboard"
+                    className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+                  >
+                    Admin
+                  </Link>
+                )}
+                <button
+                  onClick={logout}
+                  className="px-5 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors shadow-sm"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+            {!isAuthenticated && (
+              <button
+                onClick={handleBecomeProvider}
+                disabled={loading}
+                className="px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+              >
+                Become a Provider
+              </button>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -205,18 +236,47 @@ const Navbar = () => {
             </button>
 
             <div className="pt-3 border-t border-gray-100 space-y-3">
-              <Link
-                to="/login"
-                className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-              >
-                Login
-              </Link>
-              <Link
-                to="/signup"
-                className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-              >
-                Signup
-              </Link>
+              {!isAuthenticated ? (
+                <>
+                  <Link
+                    to="/login"
+                    className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    to="/signup"
+                    className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
+                  >
+                    Signup
+                  </Link>
+                </>
+              ) : (
+                <>
+                  {user?.role === "provider" && (
+                    <Link
+                      to="/provider/dashboard"
+                      className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
+                    >
+                      Dashboard
+                    </Link>
+                  )}
+                  {user?.role === "admin" && (
+                    <Link
+                      to="/admin/dashboard"
+                      className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
+                    >
+                      Admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={logout}
+                    className="w-full text-left px-0 py-2 text-red-600 hover:text-red-700 font-medium transition-colors"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>

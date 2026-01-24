@@ -1,57 +1,68 @@
 import { useState } from "react";
-import { SignupApi } from "../../api/auth.api";
 import { useNavigate } from "react-router-dom";
+import { SignupApi } from "../../api/auth.api.js";
 
 const SignupForm = () => {
-    const navigate = useNavigate();
-    const[form, setForm] = useState({
-        name: "",
-        email:"",
-        password:"",
-        role:"seeker",
-    });
+  const navigate = useNavigate();
 
-  const[loading, setLoading] = useState(false);
-  const[error, setError] = useState(null);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-  const handleChange = (e) => {
-    setForm({...form, [e.target.name]:e.target.value});
-  }
-  const handleSubmit = async(e) => {
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-        setLoading(true);
-        setError(null);
+    setError(null);
+    setLoading(true);
 
-        const data = await SignupApi(form);
+    try {
+      await SignupApi(form);
 
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        navigate("/")
-    }catch(err){
-        setError(err.response?.data?.message|| "Signup failed");
-    }finally{
-        setLoading(false)
+      // ✅ After signup → go to login
+      navigate("/login", {
+        state: { email: form.email },
+        replace: true,
+      });
+    } catch (err) {
+      setError(err.response?.data?.message || "Signup failed");
+    } finally {
+      setLoading(false);
     }
-    };
-  
+  };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input name="name" onChange={handleChange} placeholder="Name" />
-      <input name="email" onChange={handleChange} placeholder="Email" />
-      <input name="password" type="password" onChange={handleChange} placeholder="Password" />
+      {error && <p className="text-red-600">{error}</p>}
 
-      <select name="role" onChange={handleChange}>
-        <option value="seeker">User</option>
-        <option value="provider">Provider</option>
-      </select>
+      <input
+        placeholder="Name"
+        value={form.name}
+        onChange={(e) => setForm({ ...form, name: e.target.value })}
+        required
+      />
 
-      {error && <p className="text-red-500">{error}</p>}
+      <input
+        type="email"
+        placeholder="Email"
+        value={form.email}
+        onChange={(e) => setForm({ ...form, email: e.target.value })}
+        required
+      />
+
+      <input
+        type="password"
+        placeholder="Password"
+        value={form.password}
+        onChange={(e) => setForm({ ...form, password: e.target.value })}
+        required
+      />
 
       <button disabled={loading}>
-        {loading ? "Creating account..." : "Signup"}
+        {loading ? "Creating account..." : "Sign up"}
       </button>
     </form>
   );
