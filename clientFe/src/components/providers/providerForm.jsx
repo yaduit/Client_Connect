@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCategories } from "../../hooks/useCategories.jsx";
+import { useAuth } from "../../context/auth/useAuth.js";
 import { registerProviderApi } from "../../api/provider.api.js";
 
 const ProviderForm = () => {
   const navigate = useNavigate();
   const { categories, loading: categoriesLoading } = useCategories();
+  const { user, login } = useAuth(); // ✅ Get auth context
 
   const [businessName, setBusinessName] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -110,7 +112,7 @@ const ProviderForm = () => {
       setError(null);
       setFieldErrors({});
 
-      await registerProviderApi({
+      const response = await registerProviderApi({
         businessName,
         categoryId,
         subCategorySlug,
@@ -123,6 +125,22 @@ const ProviderForm = () => {
           },
         },
       });
+
+      // ✅ Update user role in auth context
+      if (response && response.user) {
+        const storedAuth = JSON.parse(localStorage.getItem("auth") || "{}");
+        login({
+          user: response.user,
+          token: storedAuth.token || user?.token,
+        });
+      } else {
+        // Fallback: update user role to provider
+        const storedAuth = JSON.parse(localStorage.getItem("auth") || "{}");
+        login({
+          user: { ...user, role: "provider" },
+          token: storedAuth.token || user?.token,
+        });
+      }
 
       // Success → go to dashboard
       navigate("/provider/dashboard");

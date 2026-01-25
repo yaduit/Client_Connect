@@ -15,7 +15,7 @@ const SignupPage = () => {
           Join Client Connect in minutes
         </p>
 
-        <SignupForm redirect={redirect} />
+        <SignupForm />
 
         <p className="text-sm text-gray-600 mt-6 text-center">
           Already have an account?{" "}

@@ -28,7 +28,7 @@ function App() {
       <Route
         path="/provider/onboarding"
         element={
-          <ProtectedRoute role="provider">
+          <ProtectedRoute requiredRole="provider" allowSeeker={true}>
             <ProviderOnboarding />
           </ProtectedRoute>
         }
@@ -37,7 +37,7 @@ function App() {
       <Route
         path="/provider/dashboard"
         element={
-          <ProtectedRoute role="provider">
+          <ProtectedRoute requiredRole="provider">
             <ProviderDashBoard />
           </ProtectedRoute>
         }
