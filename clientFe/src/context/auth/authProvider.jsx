@@ -1,55 +1,47 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { AuthContext } from "./authContext.js";
 
-export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); 
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔁 restore login on refresh
   useEffect(() => {
-    const storedToken = localStorage.getItem("token");
-    const storedUser = localStorage.getItem("user");
-
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
+    const stored = localStorage.getItem("auth");
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setUser(parsed.user);
+      setToken(parsed.token);
     }
-
     setLoading(false);
   }, []);
 
-  // ✅ login handler
-  const login = ({ token, user }) => {
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(user));
-    setToken(token);
+  const login = ({ user, token }) => {
+    localStorage.setItem("auth", JSON.stringify({ user, token }));
     setUser(user);
+    setToken(token);
   };
 
-  // 🚪 logout handler
   const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
+    localStorage.removeItem("auth");
     setUser(null);
+    setToken(null);
   };
-
-  const value = {
-    user,
-    token,
-    isAuthenticated: !!token,
-    login,
-    logout,
-  };
-
-  if (loading) {
-    return <div className="p-6 text-center">Loading...</div>;
-  }
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        isAuthenticated: !!token,
+        login,
+        logout,
+        loading
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
 };
+
+export default AuthProvider;

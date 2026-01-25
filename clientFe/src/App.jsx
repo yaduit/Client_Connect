@@ -1,30 +1,49 @@
-import {Routes, Route } from 'react-router-dom';
-import SearchPage from './pages/searchPage.jsx'
-import ProviderDetailsPage from './pages/provider/providerDetailsPage.jsx';
-import HomePage from './pages/homePage.jsx';
-import CategoryPage from './pages/categoryPage.jsx';
-import ProviderOnboarding from './pages/provider/providerOnboarding.jsx';
-import ProviderDashBoard from './pages/provider/providerDashBoard.jsx';
-import LoginPage from './pages/auth/loginPage.jsx';
-import SignupPage from './pages/auth/signupPage.jsx';
+import { Routes, Route } from "react-router-dom";
+
+import HomePage from "./pages/homePage.jsx";
+import SearchPage from "./pages/searchPage.jsx";
+import CategoryPage from "./pages/categoryPage.jsx";
+import ProviderDetailsPage from "./pages/provider/providerDetailsPage.jsx";
+
+import LoginPage from "./pages/auth/loginPage.jsx";
+import SignupPage from "./pages/auth/signupPage.jsx";
+
+import ProviderOnboarding from "./pages/provider/providerOnboarding.jsx";
+import ProviderDashBoard from "./pages/provider/providerDashBoard.jsx";
+
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+
 function App() {
   return (
-    <div>
-      
-      <Routes>
-        <Route path='/' element={<HomePage/>}/>
-        <Route path='/login' element={<LoginPage/>}/>
-        <Route path='/signup' element={<SignupPage/>}/>
-        <Route path='/search' element={<SearchPage/>}/>
-        <Route path='/categories/:categorySlug' element={<CategoryPage/>}/>
-        <Route path='/providers/:id' element={<ProviderDetailsPage/>}/>
-        <Route path='/provider/onboarding' element={<ProviderOnboarding/>}/>
-        <Route path='/provider/dashboard' element={<ProviderDashBoard/>}/>
-      </Routes>
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<HomePage />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
+      <Route path="/search" element={<SearchPage />} />
+      <Route path="/categories/:categorySlug" element={<CategoryPage />} />
+      <Route path="/providers/:id" element={<ProviderDetailsPage />} />
 
-     
-    </div>
-  )
+      {/* Provider routes */}
+      <Route
+        path="/provider/onboarding"
+        element={
+          <ProtectedRoute role="provider">
+            <ProviderOnboarding />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/provider/dashboard"
+        element={
+          <ProtectedRoute role="provider">
+            <ProviderDashBoard />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
+  );
 }
 
 export default App;

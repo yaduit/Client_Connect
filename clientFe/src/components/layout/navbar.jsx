@@ -8,11 +8,11 @@ const Navbar = () => {
   const { user, loading, isAuthenticated, logout } = useAuth();
 
   const handleBecomeProvider = () => {
-
-    if(loading){
+    if (loading) {
       return;
     }
-    if (!user) {
+
+    if (!isAuthenticated) {
       navigate("/login?redirect=/provider/onboarding");
       return;
     }
@@ -23,6 +23,11 @@ const Navbar = () => {
     }
 
     navigate("/provider/onboarding");
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
@@ -119,15 +124,19 @@ const Navbar = () => {
                     Admin
                   </Link>
                 )}
+                <span className="text-gray-700 font-medium">
+                  Hi, {user?.name}
+                </span>
+
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="px-5 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors shadow-sm"
                 >
                   Logout
                 </button>
               </>
             )}
-            {!isAuthenticated && (
+            {(!isAuthenticated || user?.role === "seeker") && (
               <button
                 onClick={handleBecomeProvider}
                 disabled={loading}
@@ -270,7 +279,7 @@ const Navbar = () => {
                     </Link>
                   )}
                   <button
-                    onClick={logout}
+                    onClick={handleLogout}
                     className="w-full text-left px-0 py-2 text-red-600 hover:text-red-700 font-medium transition-colors"
                   >
                     Logout
