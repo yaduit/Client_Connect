@@ -1,5 +1,5 @@
 import { Routes, Route } from "react-router-dom";
-
+import Navbar from "./components/layout/navbar.jsx";
 import HomePage from "./pages/homePage.jsx";
 import SearchPage from "./pages/searchPage.jsx";
 import CategoryPage from "./pages/categoryPage.jsx";
@@ -15,6 +15,8 @@ import ProtectedRoute from "./routes/protectedRoutes.jsx";
 
 function App() {
   return (
+    <>
+    <Navbar/>
     <Routes>
       {/* Public routes */}
       <Route path="/" element={<HomePage />} />
@@ -43,6 +45,7 @@ function App() {
         }
       />
     </Routes>
+    </>
   );
 }
 
