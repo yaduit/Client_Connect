@@ -11,7 +11,7 @@ import SignupPage from "./pages/auth/signupPage.jsx";
 import ProviderOnboarding from "./pages/provider/providerOnboarding.jsx";
 import ProviderDashBoard from "./pages/provider/providerDashBoard.jsx";
 
-import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import ProtectedRoute from "./routes/protectedRoutes.jsx";
 
 function App() {
   return (
