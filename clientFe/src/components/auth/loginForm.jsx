@@ -9,7 +9,7 @@ const LoginForm = () => {
   const [params] = useSearchParams();
   const redirect = params.get("redirect") || "/";
 
-  const { login } = useAuth(); // ✅ THIS IS REQUIRED
+  const { login } = useAuth();
 
   const [form, setForm] = useState({
     email: "",
@@ -27,15 +27,26 @@ const LoginForm = () => {
     try {
       const data = await LoginApi(form);
 
-      // ✅ Update global auth state
+      // ✅ Token is now in httpOnly cookie (set by backend)
+      // We only need to store the user data
+      if (!data.user) {
+        console.error("❌ Missing user in response:", data);
+        setError("Login response is missing user data");
+        setLoading(false);
+        return;
+      }
+
+      console.log("✅ Login successful, user:", data.user);
+
+      // ✅ Update auth state with user data only
       login({
-        token: data.token,
         user: data.user,
       });
 
       navigate(redirect, { replace: true });
     } catch (err) {
-      setError("Invalid email or password");
+      console.error("❌ Login Error:", err);
+      setError(err.message || "Invalid email or password");
     } finally {
       setLoading(false);
     }
