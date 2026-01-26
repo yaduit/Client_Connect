@@ -1,11 +1,21 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/auth/useAuth";
+import { LogoutApi } from "../../api/auth.api.js";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { user, loading, isAuthenticated, logout } = useAuth();
+
+  // ⚠️ TEMPORARY DEBUG - Remove after testing
+  console.log("🔍 Navbar Render:", {
+    loading,
+    isAuthenticated,
+    user,
+    userRole: user?.role,
+    userInStorage: !!localStorage.getItem("user")
+  });
 
   const handleBecomeProvider = () => {
     if (loading) {
@@ -25,9 +35,19 @@ const Navbar = () => {
     navigate("/provider/onboarding");
   };
 
-  const handleLogout = () => {
-    logout();
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      // ✅ Call backend to clear httpOnly cookie
+      await LogoutApi();
+      // Clear local user data
+      logout();
+      navigate("/");
+    } catch (err) {
+      console.error("❌ Logout failed:", err);
+      // Still clear local data even if API call fails
+      logout();
+      navigate("/");
+    }
   };
 
   const closeMobileMenu = () => {
@@ -46,7 +66,7 @@ const Navbar = () => {
           {/* Left section: Logo */}
           <div className="shrink-0">
             <Link to="/" className="flex items-center">
-              <span className="text-xl font-bold text-(--color-primary)">
+              <span className="text-xl font-bold text-green-600">
                 Client Connect
               </span>
             </Link>
@@ -101,7 +121,9 @@ const Navbar = () => {
 
           {/* Right section: Auth links and CTA */}
           <div className="hidden lg:flex items-center space-x-4">
-            {loading ? null : (
+            {loading ? (
+              <div className="text-gray-500 text-sm">Loading...</div>
+            ) : (
               <>
                 {!isAuthenticated && (
                   <>
@@ -128,6 +150,9 @@ const Navbar = () => {
 
                 {isAuthenticated && user?.role === "seeker" && (
                   <>
+                    <span className="text-gray-700 font-medium">
+                      Hi, {user.name}
+                    </span>
                     <button
                       onClick={handleBecomeProvider}
                       className="px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-sm"
@@ -145,6 +170,9 @@ const Navbar = () => {
 
                 {isAuthenticated && user?.role === "provider" && (
                   <>
+                    <span className="text-gray-700 font-medium">
+                      Hi, {user.name}
+                    </span>
                     <Link
                       to="/provider/dashboard"
                       className="text-gray-700 hover:text-green-600 font-medium transition-colors"
@@ -162,6 +190,9 @@ const Navbar = () => {
 
                 {isAuthenticated && user?.role === "admin" && (
                   <>
+                    <span className="text-gray-700 font-medium">
+                      Hi, {user.name}
+                    </span>
                     <Link
                       to="/admin/dashboard"
                       className="text-gray-700 hover:text-green-600 font-medium transition-colors"
@@ -281,7 +312,9 @@ const Navbar = () => {
             </button>
 
             <div className="pt-3 border-t border-gray-100 space-y-3">
-              {loading ? null : (
+              {loading ? (
+                <div className="text-gray-500 text-sm">Loading...</div>
+              ) : (
                 <>
                   {!isAuthenticated && (
                     <>
@@ -302,39 +335,39 @@ const Navbar = () => {
                     </>
                   )}
 
+                  {isAuthenticated && (
+                    <div className="py-2 text-gray-700 font-medium">
+                      Hi, {user?.name}
+                    </div>
+                  )}
+
                   {isAuthenticated && user?.role === "seeker" && (
-                    <>
-                      <button
-                        onClick={() => handleNavigation(handleBecomeProvider)}
-                        className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors w-full text-left"
-                      >
-                        Become a Provider
-                      </button>
-                    </>
+                    <button
+                      onClick={() => handleNavigation(handleBecomeProvider)}
+                      className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors w-full text-left"
+                    >
+                      Become a Provider
+                    </button>
                   )}
 
                   {isAuthenticated && user?.role === "provider" && (
-                    <>
-                      <Link
-                        to="/provider/dashboard"
-                        onClick={closeMobileMenu}
-                        className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-                      >
-                        Dashboard
-                      </Link>
-                    </>
+                    <Link
+                      to="/provider/dashboard"
+                      onClick={closeMobileMenu}
+                      className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
+                    >
+                      Dashboard
+                    </Link>
                   )}
 
                   {isAuthenticated && user?.role === "admin" && (
-                    <>
-                      <Link
-                        to="/admin/dashboard"
-                        onClick={closeMobileMenu}
-                        className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-                      >
-                        Admin
-                      </Link>
-                    </>
+                    <Link
+                      to="/admin/dashboard"
+                      onClick={closeMobileMenu}
+                      className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
+                    >
+                      Admin
+                    </Link>
                   )}
 
                   {isAuthenticated && (
