@@ -7,7 +7,7 @@ import { registerProviderApi } from "../../api/provider.api.js";
 const ProviderForm = () => {
   const navigate = useNavigate();
   const { categories, loading: categoriesLoading } = useCategories();
-  const { user, login } = useAuth(); // ✅ Get auth context
+  const { user, updateUser } = useAuth();
 
   const [businessName, setBusinessName] = useState("");
   const [categoryId, setCategoryId] = useState("");
@@ -47,7 +47,6 @@ const ProviderForm = () => {
           const { longitude, latitude } = pos.coords;
           setCoords([longitude, latitude]);
 
-          // Reverse geocoding using OpenStreetMap Nominatim
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
           );
@@ -78,7 +77,6 @@ const ProviderForm = () => {
     e.preventDefault();
     const errors = {};
 
-    // Validate all required fields
     if (!businessName.trim()) {
       errors.businessName = "Business name is required";
     }
@@ -127,23 +125,14 @@ const ProviderForm = () => {
       });
 
       // ✅ Update user role in auth context
-      if (response && response.user) {
-        const storedAuth = JSON.parse(localStorage.getItem("auth") || "{}");
-        login({
-          user: response.user,
-          token: storedAuth.token || user?.token,
-        });
+      if (response?.user) {
+        updateUser(response.user);
       } else {
-        // Fallback: update user role to provider
-        const storedAuth = JSON.parse(localStorage.getItem("auth") || "{}");
-        login({
-          user: { ...user, role: "provider" },
-          token: storedAuth.token || user?.token,
-        });
+        // Fallback: manually update role
+        updateUser({ ...user, role: "provider" });
       }
 
-      // Success → go to dashboard
-      navigate("/provider/dashboard");
+      navigate("/provider/dashboard", { replace: true });
     } catch (err) {
       setError(
         err.response?.data?.message ||
@@ -174,7 +163,7 @@ const ProviderForm = () => {
           placeholder="Business Name"
           value={businessName}
           onChange={(e) => setBusinessName(e.target.value)}
-          className={`border p-2 w-full ${
+          className={`border p-2 w-full rounded ${
             fieldErrors.businessName ? "border-red-500" : ""
           }`}
           required
@@ -193,7 +182,7 @@ const ProviderForm = () => {
             setCategoryId(e.target.value);
             setSubCategorySlug("");
           }}
-          className={`border p-2 w-full ${
+          className={`border p-2 w-full rounded ${
             fieldErrors.categoryId ? "border-red-500" : ""
           }`}
           disabled={categoriesLoading}
@@ -218,7 +207,7 @@ const ProviderForm = () => {
           <select
             value={subCategorySlug}
             onChange={(e) => setSubCategorySlug(e.target.value)}
-            className={`border p-2 w-full ${
+            className={`border p-2 w-full rounded ${
               fieldErrors.subCategorySlug ? "border-red-500" : ""
             }`}
             required
@@ -243,7 +232,7 @@ const ProviderForm = () => {
           placeholder="Describe your service"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className={`border p-2 w-full ${
+          className={`border p-2 w-full rounded ${
             fieldErrors.description ? "border-red-500" : ""
           }`}
           rows={4}
@@ -261,7 +250,7 @@ const ProviderForm = () => {
             placeholder="City"
             value={city}
             onChange={(e) => setCity(e.target.value)}
-            className={`border p-2 w-full ${
+            className={`border p-2 w-full rounded ${
               fieldErrors.city ? "border-red-500" : ""
             }`}
             required
@@ -275,7 +264,7 @@ const ProviderForm = () => {
             placeholder="State"
             value={state}
             onChange={(e) => setState(e.target.value)}
-            className={`border p-2 w-full ${
+            className={`border p-2 w-full rounded ${
               fieldErrors.state ? "border-red-500" : ""
             }`}
             required
@@ -306,7 +295,7 @@ const ProviderForm = () => {
       <button
         type="submit"
         disabled={loading || categoriesLoading}
-        className="bg-green-600 text-white px-4 py-2 rounded w-full disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-green-600 text-white px-4 py-2 rounded w-full disabled:opacity-50 disabled:cursor-not-allowed hover:bg-green-700 transition-colors"
       >
         {loading ? "Publishing..." : "Publish Service"}
       </button>
