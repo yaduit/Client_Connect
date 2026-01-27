@@ -1,10 +1,10 @@
 import express from 'express';
-import { registerServiceProvider, getProviderById } from './serviceProvider.controller.js';
+import { registerServiceProvider, getProviderById, getMyProvider } from './serviceProvider.controller.js';
 import authMiddleware from '../../middlewares/auth.middleware.js';
-import roleMiddleware from '../../middlewares/role.middleware.js';
 
 const router = express.Router();
+router.get( "/me", authMiddleware, getMyProvider);
 router.get('/:id', getProviderById);
-router.post('/register', authMiddleware,roleMiddleware('provider'),registerServiceProvider);
+router.post('/register', authMiddleware,registerServiceProvider);
 
 export default router;

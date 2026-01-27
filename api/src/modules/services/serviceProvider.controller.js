@@ -1,5 +1,6 @@
 import serviceProviderModel from "./serviceProvider.model.js";
 import categoryModel from "../categories/category.model.js";
+import userModel from "../users/user.model.js";
 import mongoose from 'mongoose';
 
 export const getProviderById = async (req,res) => {
@@ -20,30 +21,52 @@ export const getProviderById = async (req,res) => {
   }
 };
 
+export const getMyProvider = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const provider = await serviceProviderModel
+      .findOne({ userId })
+      .populate("categoryId", "name slug");
+
+    if (!provider) {
+      return res.status(404).json({
+        message: "Provider profile not found",
+      });
+    }
+
+    res.status(200).json({ provider });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 export const registerServiceProvider = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const {
-      categoryId,
-      subCategorySlug,
-      businessName,
-      city,
-      state,
-      description,
-      coordinates
-    } = req.body;
+      const {
+        categoryId,
+        subCategorySlug,
+        businessName,
+        description,
+        location
+      } = req.body;
 
-    if (
-      !categoryId ||
-      !subCategorySlug ||
-      !businessName ||
-      !city ||
-      !state ||
-      !coordinates
-    ) {
-      return res.status(400).json({ message: 'Required fields missing' });
-    }
+  if (
+    !categoryId ||
+    !subCategorySlug ||
+    !businessName ||
+    !location?.city ||
+    !location?.state ||
+    !location?.geo?.coordinates
+  ) {
+    return res.status(400).json({ message: "Required fields missing" });
+  }
+  const {city, state} = location;
+  const coordinates = location.geo.coordinates;
 
     // one provider per user
     const existing = await serviceProviderModel.findOne({ userId });
@@ -89,6 +112,8 @@ export const registerServiceProvider = async (req, res) => {
         }
       }
     });
+
+  await userModel.findByIdAndUpdate(userId, { role: "provider" });
 
     return res.status(201).json({
       message: 'Service provider registered successfully',
