@@ -24,9 +24,7 @@ const ProviderForm = () => {
   const [fieldErrors, setFieldErrors] = useState({});
   const [locationStatus, setLocationStatus] = useState("");
 
-  const selectedCategory = categories.find(
-    (c) => c._id === categoryId
-  );
+  const selectedCategory = categories.find((c) => c._id === categoryId);
 
   const handleUseMyLocation = () => {
     setError(null);
@@ -48,7 +46,7 @@ const ProviderForm = () => {
           setCoords([longitude, latitude]);
 
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
           );
           const data = await response.json();
 
@@ -69,7 +67,7 @@ const ProviderForm = () => {
         setError("Failed to get location. Please enable location access.");
         setLocationStatus("");
         setLocationLoading(false);
-      }
+      },
     );
   };
 
@@ -124,20 +122,15 @@ const ProviderForm = () => {
         },
       });
 
-      // ✅ Update user role in auth context
-      if (response?.user) {
-        updateUser(response.user);
-      } else {
-        // Fallback: manually update role
-        updateUser({ ...user, role: "provider" });
-      }
+      // Update user role locally since backend only returns provider data
+      updateUser({
+        ...user,
+        role: response.data?.user?.role || "provider",
+      });
 
       navigate("/provider/dashboard", { replace: true });
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-        "Failed to publish service"
-      );
+      setError(err.response?.data?.message || "Failed to publish service");
     } finally {
       setLoading(false);
     }
@@ -148,9 +141,7 @@ const ProviderForm = () => {
       onSubmit={handleSubmit}
       className="space-y-4 bg-white p-6 rounded shadow"
     >
-      <h2 className="text-xl font-semibold">
-        Publish Your Service
-      </h2>
+      <h2 className="text-xl font-semibold">Publish Your Service</h2>
 
       {error && <p className="text-red-600 font-semibold">{error}</p>}
 
@@ -169,9 +160,7 @@ const ProviderForm = () => {
           required
         />
         {fieldErrors.businessName && (
-          <p className="text-red-600 text-sm">
-            {fieldErrors.businessName}
-          </p>
+          <p className="text-red-600 text-sm">{fieldErrors.businessName}</p>
         )}
       </div>
 
@@ -196,9 +185,7 @@ const ProviderForm = () => {
           ))}
         </select>
         {fieldErrors.categoryId && (
-          <p className="text-red-600 text-sm">
-            {fieldErrors.categoryId}
-          </p>
+          <p className="text-red-600 text-sm">{fieldErrors.categoryId}</p>
         )}
       </div>
 
@@ -238,9 +225,7 @@ const ProviderForm = () => {
           rows={4}
         />
         {fieldErrors.description && (
-          <p className="text-red-600 text-sm">
-            {fieldErrors.description}
-          </p>
+          <p className="text-red-600 text-sm">{fieldErrors.description}</p>
         )}
       </div>
 
