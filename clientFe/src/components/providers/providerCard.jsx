@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import ProviderDetailsSkeleton from "./providerDetailsSkeleton";
 
-const ProviderCard = ({ provider }) => {
+const ProviderCard = ({ provider, loading = false }) => {
+  if (loading) {
+    return <ProviderDetailsSkeleton />;
+  }
+
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group max-w-sm w-full">
       {/* Image */}
