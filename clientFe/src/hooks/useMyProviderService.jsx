@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getProviderByIdApi } from "../api/provider.api.js";
+import { getMyProviderApi } from "../api/provider.api.js";
 
 export const useMyProviderService = () => {
   const [provider, setProvider] = useState(null);
@@ -9,7 +9,7 @@ export const useMyProviderService = () => {
   useEffect(() => {
     const fetchProvider = async () => {
       try {
-        const data = await getProviderByIdApi();
+        const data = await getMyProviderApi();
         setProvider(data.provider);
       } catch (err) {
         setError(err.response?.data?.message || "Failed to load provider");

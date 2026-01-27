@@ -9,3 +9,8 @@ export const getProviderByIdApi = async (id) => {
   const res = await api.get(`/providers/${id}`);
   return res.data;
 };
+
+export const getMyProviderApi = async () => {
+  const res = await api.get("/providers/me");
+  return res.data;
+};
