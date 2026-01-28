@@ -296,12 +296,20 @@ export const registerServiceProvider = async (req, res) => {
     });
   }
 };
-
 /**
- * Update provider profile (basic example)
- * @route PUT /api/provider/me
+ * Update provider profile (businessName, description, location city/state)
+ * @route PATCH /api/providers/me
  * @access Private (requires authentication)
  * @requires req.user.id from auth middleware
+ * 
+ * @body {
+ *   businessName: string (optional),
+ *   description: string (optional),
+ *   location: {
+ *     city: string (optional),
+ *     state: string (optional)
+ *   }
+ * }
  */
 export const updateMyProvider = async (req, res) => {
   try {
@@ -314,17 +322,99 @@ export const updateMyProvider = async (req, res) => {
       });
     }
 
-    // Fields that can be updated
-    const allowedFields = ['businessName', 'description', 'location'];
+    // Get current provider first
+    const provider = await serviceProviderModel.findOne({ userId });
+    if (!provider) {
+      return res.status(404).json({
+        success: false,
+        message: 'Provider profile not found'
+      });
+    }
+
+    // ============ PREPARE UPDATES ============
+
     const updates = {};
 
-    // Filter to only allowed fields
-    allowedFields.forEach(field => {
-      if (req.body[field] !== undefined) {
-        updates[field] = req.body[field];
+    // Update businessName if provided
+    if (req.body.businessName !== undefined) {
+      const businessName = req.body.businessName.trim();
+      
+      if (!businessName) {
+        return res.status(400).json({
+          success: false,
+          message: 'Business name cannot be empty'
+        });
       }
-    });
+      
+      if (businessName.length < 3) {
+        return res.status(400).json({
+          success: false,
+          message: 'Business name must be at least 3 characters'
+        });
+      }
+      
+      if (businessName.length > 100) {
+        return res.status(400).json({
+          success: false,
+          message: 'Business name must be less than 100 characters'
+        });
+      }
+      
+      updates.businessName = businessName;
+    }
 
+    // Update description if provided
+    if (req.body.description !== undefined) {
+      const description = req.body.description.trim();
+      
+      if (description.length > 500) {
+        return res.status(400).json({
+          success: false,
+          message: 'Description must be 500 characters or less'
+        });
+      }
+      
+      updates.description = description;
+    }
+
+    // Update location city/state if provided
+    if (req.body.location) {
+      const { city, state } = req.body.location;
+      
+      // Update city if provided
+      if (city !== undefined) {
+        const trimmedCity = city.trim();
+        if (!trimmedCity) {
+          return res.status(400).json({
+            success: false,
+            message: 'City cannot be empty'
+          });
+        }
+        updates['location.city'] = trimmedCity;
+      }
+      
+      // Update state if provided
+      if (state !== undefined) {
+        const trimmedState = state.trim();
+        if (!trimmedState) {
+          return res.status(400).json({
+            success: false,
+            message: 'State cannot be empty'
+          });
+        }
+        updates['location.state'] = trimmedState;
+      }
+
+      // Ensure at least one location field is being updated
+      if (!city && !state) {
+        return res.status(400).json({
+          success: false,
+          message: 'Please provide city or state to update'
+        });
+      }
+    }
+
+    // Check if there are any updates to make
     if (Object.keys(updates).length === 0) {
       return res.status(400).json({
         success: false,
@@ -332,41 +422,71 @@ export const updateMyProvider = async (req, res) => {
       });
     }
 
-    // Validate coordinates if location is being updated
-    if (updates.location?.geo?.coordinates) {
-      const coordinates = updates.location.geo.coordinates;
-      
-      if (!Array.isArray(coordinates) || coordinates.length !== 2) {
-        return res.status(400).json({
-          success: false,
-          message: 'Coordinates must be [longitude, latitude]'
-        });
-      }
+    // ============ APPLY UPDATES ============
 
-      if (coordinates[0] < -180 || coordinates[0] > 180) {
-        return res.status(400).json({
-          success: false,
-          message: 'Longitude must be between -180 and 180'
-        });
-      }
+    // Use updateOne with dot notation to avoid geo validation
+    await serviceProviderModel.updateOne(
+      { userId },
+      { $set: updates }
+    );
 
-      if (coordinates[1] < -90 || coordinates[1] > 90) {
-        return res.status(400).json({
-          success: false,
-          message: 'Latitude must be between -90 and 90'
-        });
-      }
+    // Fetch updated provider
+    const updatedProvider = await serviceProviderModel
+      .findOne({ userId })
+      .populate('categoryId', 'name slug');
+
+    return res.status(200).json({
+      success: true,
+      message: 'Provider updated successfully',
+      provider: updatedProvider
+    });
+
+  } catch (error) {
+    console.error('Error in updateMyProvider:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+/**
+ * Toggle provider service active status
+ * @route PATCH /api/providers/me/status
+ * @access Private (requires authentication)
+ * @requires req.user.id from auth middleware
+ * 
+ * @body {
+ *   isActive: boolean (required)
+ * }
+ */
+export const toggleProviderStatus = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { isActive } = req.body;
+
+    // Validate userId exists
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
+    // Validate isActive is boolean
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({
+        success: false,
+        message: 'isActive must be a boolean value'
+      });
     }
 
     // Find and update provider
     const provider = await serviceProviderModel
       .findOneAndUpdate(
         { userId },
-        updates,
-        { 
-          new: true, // Return updated document
-          runValidators: true // Run model validators
-        }
+        { isActive },
+        { new: true }
       )
       .populate('categoryId', 'name slug');
 
@@ -379,12 +499,12 @@ export const updateMyProvider = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Provider updated successfully',
+      message: `Provider ${isActive ? 'activated' : 'deactivated'} successfully`,
       provider
     });
 
   } catch (error) {
-    console.error('Error in updateMyProvider:', error);
+    console.error('Error in toggleProviderStatus:', error);
     return res.status(500).json({
       success: false,
       message: 'Internal server error'
