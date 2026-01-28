@@ -71,6 +71,7 @@ export const useMyProviderService = () => {
    */
   return {
     provider,
+    setProvider,
     loading,
     error,
     refetch: fetchProvider, // Allow manual refetch

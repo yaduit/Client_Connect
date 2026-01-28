@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Eye,
@@ -5,7 +6,6 @@ import {
   Star,
   Clock,
   Edit3,
-  EyeOff,
   Plus,
   TrendingUp,
   AlertCircle,
@@ -13,12 +13,15 @@ import {
 import ProviderServiceCard from "../../components/providers/providerServiceCard.jsx";
 import ProviderEmptyState from "../../components/providers/providerEmptyState.jsx";
 import StatCard from "../../components/providers/statCard.jsx";
+import EditProviderModal from "../../components/providers/editProviderModel.jsx";
 import { useMyProviderService } from "../../hooks/useMyProviderService.jsx";
 
 const ProviderDashboard = () => {
-  const { provider, loading, error } = useMyProviderService();
+  // ============ STATE ============
+  const { provider, loading, error, setProvider } = useMyProviderService();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-  /* ============ LOADING STATE ============ */
+  // ============ LOADING STATE ============
   if (loading) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4">
@@ -30,7 +33,7 @@ const ProviderDashboard = () => {
     );
   }
 
-  /* ============ ERROR STATE ============ */
+  // ============ ERROR STATE ============
   if (error) {
     return (
       <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4">
@@ -53,12 +56,31 @@ const ProviderDashboard = () => {
     );
   }
 
-  /* ============ EMPTY STATE ============ */
+  // ============ EMPTY STATE ============
   if (!provider) {
-    return <ProviderEmptyState/>;
+    return <ProviderEmptyState />;
   }
 
-  // Mock stats - replace with real data from API
+  // ============ HANDLERS ============
+  const handleEditModalOpen = () => {
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditModalClose = () => {
+    setIsEditModalOpen(false);
+  };
+
+  const handleEditSuccess = (updatedProvider) => {
+    // Update provider in parent state/context
+    setProvider(updatedProvider);
+  };
+
+  const handleStatusChange = (updatedProvider) => {
+    // Update provider when status changes
+    setProvider(updatedProvider);
+  };
+
+  // ============ STATS DATA ============
   const stats = [
     {
       icon: Eye,
@@ -106,13 +128,13 @@ const ProviderDashboard = () => {
                 You're all set! Manage your service, track performance, and grow your business.
               </p>
             </div>
-            <Link
-              to="/provider/edit"
+            <button
+              onClick={handleEditModalOpen}
               className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all duration-200 hover:shadow-lg active:scale-95 font-medium text-sm sm:text-base whitespace-nowrap"
             >
               <Edit3 className="w-4 h-4" />
               Edit Service
-            </Link>
+            </button>
           </div>
         </div>
 
@@ -128,7 +150,11 @@ const ProviderDashboard = () => {
           
           {/* Service Card - Full Width on Mobile */}
           <div className="lg:col-span-2">
-            <ProviderServiceCard provider={provider} />
+            <ProviderServiceCard 
+              provider={provider}
+              onStatusChange={handleStatusChange}
+              onEditClick={handleEditModalOpen}
+            />
           </div>
 
           {/* Quick Actions Panel */}
@@ -180,23 +206,15 @@ const ProviderDashboard = () => {
             {/* Action Buttons */}
             <div className="space-y-3">
               <button
+                onClick={handleEditModalOpen}
                 className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
                   provider.isActive
-                    ? "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
-                    : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                    ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
                 }`}
               >
-                {provider.isActive ? (
-                  <>
-                    <EyeOff className="w-4 h-4" />
-                    Deactivate
-                  </>
-                ) : (
-                  <>
-                    <Eye className="w-4 h-4" />
-                    Reactivate
-                  </>
-                )}
+                <Edit3 className="w-4 h-4" />
+                Edit Details
               </button>
 
               <Link
@@ -275,6 +293,14 @@ const ProviderDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* ============ EDIT MODAL ============ */}
+      <EditProviderModal
+        provider={provider}
+        isOpen={isEditModalOpen}
+        onClose={handleEditModalClose}
+        onSuccess={handleEditSuccess}
+      />
     </div>
   );
 };
