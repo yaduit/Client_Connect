@@ -17,42 +17,65 @@ export const getMyProviderApi = async () => {
   return res.data;
 };
 
-// ============ NEW ENDPOINTS ============
-
-/**
- * Toggle provider service active status
- * @param {boolean} isActive - New status
- * @returns {Promise} - Updated provider object
- */
 export const toggleProviderStatusApi = async (isActive) => {
   const res = await api.patch("/providers/me/status", { isActive });
   return res.data;
 };
 
-/**
- * Update provider profile (businessName, description, location)
- * @param {Object} data - Fields to update
- * @returns {Promise} - Updated provider object
- */
 export const updateProviderApi = async (data) => {
   const res = await api.patch("/providers/me", data);
   return res.data;
 };
 
-/**
- * Deactivate provider service
- * @returns {Promise} - Updated provider object
- */
 export const deactivateProviderApi = async () => {
   const res = await api.put("/providers/deactivate");
   return res.data;
 };
 
-/**
- * Activate provider service
- * @returns {Promise} - Updated provider object
- */
 export const activateProviderApi = async () => {
   const res = await api.put("/providers/activate");
+  return res.data;
+};
+
+// ============ NEW IMAGE ENDPOINTS ============
+
+/**
+ * Upload service images to Cloudinary
+ * @param {File[]} files - Array of image files
+ * @returns {Promise} - Updated provider object with new images
+ * 
+ * Example:
+ * const files = [file1, file2, file3];
+ * const response = await uploadProviderImagesApi(files);
+ */
+export const uploadProviderImagesApi = async (files) => {
+  // Create FormData for multipart upload
+  const formData = new FormData();
+  
+  // Add files to FormData
+  files.forEach((file) => {
+    formData.append("images", file);
+  });
+
+  // Send to backend
+  const res = await api.post("/providers/me/images", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data"
+    }
+  });
+
+  return res.data;
+};
+
+/**
+ * Delete a service image by publicId
+ * @param {string} publicId - Cloudinary public_id of the image
+ * @returns {Promise} - Updated provider object
+ * 
+ * Example:
+ * await deleteProviderImageApi("marketplace/providers/userId/imagename");
+ */
+export const deleteProviderImageApi = async (publicId) => {
+  const res = await api.delete(`/providers/me/images/${publicId}`);
   return res.data;
 };

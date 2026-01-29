@@ -9,17 +9,24 @@ import {
   Plus,
   TrendingUp,
   AlertCircle,
+  Trash2,
+  X,
 } from "lucide-react";
 import ProviderServiceCard from "../../components/providers/providerServiceCard.jsx";
 import ProviderEmptyState from "../../components/providers/providerEmptyState.jsx";
 import StatCard from "../../components/providers/statCard.jsx";
 import EditProviderModal from "../../components/providers/editProviderModel.jsx";
 import { useMyProviderService } from "../../hooks/useMyProviderService.jsx";
+import { deleteProviderImageApi } from "../../api/provider.api.js";
 
 const ProviderDashboard = () => {
   // ============ STATE ============
-  const { provider, loading, error, setProvider } = useMyProviderService();
+  const { provider, loading, error, setProvider, refetch } = useMyProviderService();
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [deletingImageId, setDeletingImageId] = useState(null);
+  const [deleteError, setDeleteError] = useState(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showImageModal, setShowImageModal] = useState(false);
 
   // ============ LOADING STATE ============
   if (loading) {
@@ -71,13 +78,39 @@ const ProviderDashboard = () => {
   };
 
   const handleEditSuccess = (updatedProvider) => {
-    // Update provider in parent state/context
     setProvider(updatedProvider);
+    setIsEditModalOpen(false);
+    // Refetch to get latest data
+    refetch();
   };
 
   const handleStatusChange = (updatedProvider) => {
-    // Update provider when status changes
     setProvider(updatedProvider);
+  };
+
+  // Handle delete image
+  const handleDeleteImage = async (publicId) => {
+    if (!window.confirm("Are you sure you want to delete this image?")) {
+      return;
+    }
+
+    try {
+      setDeletingImageId(publicId);
+      setDeleteError(null);
+
+      const response = await deleteProviderImageApi(publicId);
+
+      // Update provider with new images
+      setProvider(response.provider);
+
+      // Show success toast or message
+      alert("Image deleted successfully");
+    } catch (err) {
+      console.error("Error deleting image:", err);
+      setDeleteError(err.message || "Failed to delete image");
+    } finally {
+      setDeletingImageId(null);
+    }
   };
 
   // ============ STATS DATA ============
@@ -113,6 +146,9 @@ const ProviderDashboard = () => {
     },
   ];
 
+  const images = provider.images || [];
+  const hasImages = images.length > 0;
+
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
@@ -144,6 +180,86 @@ const ProviderDashboard = () => {
             <StatCard key={idx} stat={stat} />
           ))}
         </div>
+
+        {/* ============ IMAGE GALLERY SECTION ============ */}
+        {hasImages && (
+          <div className="mb-8 sm:mb-10 lg:mb-12">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                  <div className="w-1 h-6 bg-emerald-600 rounded-full"></div>
+                  Service Images ({images.length}/4)
+                </h3>
+                {images.length < 4 && (
+                  <button
+                    onClick={handleEditModalOpen}
+                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Image
+                  </button>
+                )}
+              </div>
+
+              {/* Delete Error */}
+              {deleteError && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-700">{deleteError}</p>
+                </div>
+              )}
+
+              {/* Image Gallery Grid */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {images.map((image, idx) => (
+                  <div
+                    key={image.publicId}
+                    className="relative aspect-square rounded-lg overflow-hidden border-2 border-slate-200 bg-slate-50 group cursor-pointer"
+                    onClick={() => {
+                      setSelectedImageIndex(idx);
+                      setShowImageModal(true);
+                    }}
+                  >
+                    <img
+                      src={image.url}
+                      alt={`Service image ${idx + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+
+                    {/* Hover Overlay */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <div className="text-white text-center">
+                        <p className="text-xs font-medium mb-2">Click to view</p>
+                      </div>
+                    </div>
+
+                    {/* Delete Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteImage(image.publicId);
+                      }}
+                      disabled={deletingImageId === image.publicId}
+                      className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
+                      title="Delete image"
+                    >
+                      {deletingImageId === image.publicId ? (
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      ) : (
+                        <Trash2 className="w-4 h-4" />
+                      )}
+                    </button>
+
+                    {/* Image Number Badge */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent px-2 py-2">
+                      <p className="text-xs text-white font-medium">{idx + 1}/{images.length}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ============ SERVICE CARD SECTION ============ */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
@@ -231,7 +347,7 @@ const ProviderDashboard = () => {
               <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
                 <p className="text-xs font-medium text-blue-900 mb-1">💡 Tip</p>
                 <p className="text-xs text-blue-800 leading-relaxed">
-                  Services with complete profiles get 3x more inquiries. Consider adding more details!
+                  Services with {images.length < 4 ? '4 high-quality photos' : 'complete profiles'} get 3x more inquiries!
                 </p>
               </div>
             </div>
@@ -280,7 +396,7 @@ const ProviderDashboard = () => {
               <div className="flex gap-3">
                 <div className="w-2 h-2 bg-emerald-600 rounded-full mt-1.5 shrink-0"></div>
                 <p className="text-slate-700">
-                  Add high-quality photos to boost views
+                  {images.length < 4 ? 'Add more high-quality photos' : 'Keep your photos updated'}
                 </p>
               </div>
               <div className="flex gap-3">
@@ -301,6 +417,63 @@ const ProviderDashboard = () => {
         onClose={handleEditModalClose}
         onSuccess={handleEditSuccess}
       />
+
+      {/* ============ IMAGE PREVIEW MODAL ============ */}
+      {showImageModal && images[selectedImageIndex] && (
+        <div
+          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          onClick={() => setShowImageModal(false)}
+        >
+          <div
+            className="relative bg-white rounded-lg max-w-2xl w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setShowImageModal(false)}
+              className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full z-10"
+            >
+              <X className="w-6 h-6" />
+            </button>
+
+            {/* Image */}
+            <img
+              src={images[selectedImageIndex].url}
+              alt={`Service image ${selectedImageIndex + 1}`}
+              className="w-full h-auto max-h-96 object-cover rounded-lg"
+            />
+
+            {/* Image Counter */}
+            <div className="text-center mt-4 text-slate-600">
+              {selectedImageIndex + 1} of {images.length}
+            </div>
+
+            {/* Navigation */}
+            <div className="flex gap-4 justify-center mt-4 mb-4">
+              <button
+                onClick={() =>
+                  setSelectedImageIndex((prev) =>
+                    prev === 0 ? images.length - 1 : prev - 1
+                  )
+                }
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg transition-colors"
+              >
+                Previous
+              </button>
+              <button
+                onClick={() =>
+                  setSelectedImageIndex((prev) =>
+                    prev === images.length - 1 ? 0 : prev + 1
+                  )
+                }
+                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg transition-colors"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
