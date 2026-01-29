@@ -599,3 +599,232 @@ export const activateProvider = async (req, res) => {
     });
   }
 };
+
+/**
+ * Upload multiple service images to Cloudinary
+ * @route POST /api/providers/me/images
+ * @access Private (requires authentication)
+ * @requires req.user.id from auth middleware
+ * @requires req.files from multer middleware (max 4 files)
+ * 
+ * @returns {
+ *   success: boolean,
+ *   message: string,
+ *   provider: object (with updated images array)
+ * }
+ */
+export const uploadServiceImages = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    // Validate userId exists
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
+    // Check if files were uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'No files uploaded'
+      });
+    }
+
+    // Get current provider
+    const provider = await serviceProviderModel.findOne({ userId });
+    if (!provider) {
+      return res.status(404).json({
+        success: false,
+        message: 'Provider profile not found'
+      });
+    }
+
+    // ============ VALIDATION ============
+
+    // Check current image count
+    const currentImageCount = provider.images?.length || 0;
+    const maxImages = 4;
+    const allowedNewImages = maxImages - currentImageCount;
+
+    if (currentImageCount >= maxImages) {
+      return res.status(400).json({
+        success: false,
+        message: `Maximum ${maxImages} images allowed. Please delete existing images to add new ones.`
+      });
+    }
+
+    if (req.files.length > allowedNewImages) {
+      return res.status(400).json({
+        success: false,
+        message: `You can only add ${allowedNewImages} more image(s). Maximum is ${maxImages} total.`
+      });
+    }
+
+    // ============ UPLOAD TO CLOUDINARY ============
+
+    const uploadedImages = [];
+    const failedUploads = [];
+
+    for (const file of req.files) {
+      try {
+        // Convert buffer to base64 string
+        const base64 = file.buffer.toString('base64');
+        const dataURI = `data:${file.mimetype};base64,${base64}`;
+
+        // Upload to Cloudinary
+        const result = await cloudinary.uploader.upload(dataURI, {
+          folder: `marketplace/providers/${userId}`,
+          resource_type: 'auto',
+          quality: 'auto',
+          fetch_format: 'auto'
+        });
+
+        uploadedImages.push({
+          url: result.secure_url,
+          publicId: result.public_id
+        });
+
+      } catch (uploadError) {
+        console.error(`Failed to upload file ${file.originalname}:`, uploadError);
+        failedUploads.push(file.originalname);
+      }
+    }
+
+    // ============ CHECK UPLOAD RESULTS ============
+
+    if (uploadedImages.length === 0) {
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to upload images. Please try again.'
+      });
+    }
+
+    // ============ UPDATE PROVIDER WITH NEW IMAGES ============
+
+    const updatedProvider = await serviceProviderModel.findByIdAndUpdate(
+      provider._id,
+      {
+        $push: {
+          images: {
+            $each: uploadedImages
+          }
+        }
+      },
+      { new: true }
+    ).populate('categoryId', 'name slug');
+
+    // ============ RESPONSE ============
+
+    let message = `${uploadedImages.length} image(s) uploaded successfully`;
+    if (failedUploads.length > 0) {
+      message += `. Failed to upload: ${failedUploads.join(', ')}`;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: message,
+      provider: updatedProvider
+    });
+
+  } catch (error) {
+    console.error('Error in uploadServiceImages:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
+
+/**
+ * Delete a service image from Cloudinary and MongoDB
+ * @route DELETE /api/providers/me/images/:publicId
+ * @access Private (requires authentication)
+ * @requires req.user.id from auth middleware
+ * @param {string} publicId - Cloudinary public_id of the image
+ * 
+ * @returns {
+ *   success: boolean,
+ *   message: string,
+ *   provider: object (with updated images array)
+ * }
+ */
+export const deleteServiceImage = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { publicId } = req.params;
+
+    // Validate userId exists
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: 'User not authenticated'
+      });
+    }
+
+    // Validate publicId provided
+    if (!publicId || publicId.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Image ID (publicId) is required'
+      });
+    }
+
+    // ============ GET PROVIDER ============
+
+    const provider = await serviceProviderModel.findOne({ userId });
+    if (!provider) {
+      return res.status(404).json({
+        success: false,
+        message: 'Provider profile not found'
+      });
+    }
+
+    // ============ VERIFY IMAGE OWNERSHIP ============
+
+    const imageExists = provider.images?.some(img => img.publicId === publicId);
+    if (!imageExists) {
+      return res.status(404).json({
+        success: false,
+        message: 'Image not found in your provider profile'
+      });
+    }
+
+    // ============ DELETE FROM CLOUDINARY ============
+
+    try {
+      await cloudinary.uploader.destroy(publicId);
+    } catch (cloudinaryError) {
+      console.error(`Failed to delete from Cloudinary: ${publicId}`, cloudinaryError);
+      // Continue with DB deletion even if Cloudinary deletion fails
+      // The image won't be served from DB, but it's cleaner to remove the reference
+    }
+
+    // ============ DELETE FROM MONGODB ============
+
+    const updatedProvider = await serviceProviderModel.findByIdAndUpdate(
+      provider._id,
+      {
+        $pull: {
+          images: { publicId: publicId }
+        }
+      },
+      { new: true }
+    ).populate('categoryId', 'name slug');
+
+    return res.status(200).json({
+      success: true,
+      message: 'Image deleted successfully',
+      provider: updatedProvider
+    });
+
+  } catch (error) {
+    console.error('Error in deleteServiceImage:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+};
