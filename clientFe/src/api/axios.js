@@ -10,9 +10,10 @@ const axiosInstance = axios.create({
 axiosInstance.interceptors.response.use(
     response => response,
     error => {
-        return Promise.reject(
-            error.response?.data || {message: 'Network error'}
-        );
+        const respData = error.response?.data || { message: 'Network error' };
+        const status = error.response?.status;
+        // Attach HTTP status so callers can react accordingly
+        return Promise.reject({ ...respData, status });
     }
 );
 

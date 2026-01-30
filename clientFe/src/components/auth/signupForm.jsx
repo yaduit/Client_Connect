@@ -76,38 +76,29 @@ const SignupForm = () => {
         replace: true,
       });
     } catch (err) {
-      console.error("❌ Signup Error:", {
-        status: err.response?.status,
-        message: err.response?.data?.message,
-        fullError: err
-      });
+      // err is now the object we reject from axios (contains message fields and status)
+      console.error("❌ Signup Error:", err);
 
-      // ✅ NEW: Better error handling for different status codes
-      if (err.response?.status === 409) {
+      const status = err.status;
+      const errorMessage = err.message || err.error || 'Signup failed. Please try again.';
+
+      if (status === 409 || /exist/i.test(errorMessage)) {
         setError("This email is already registered. Please log in instead or use a different email.");
         setFieldErrors(prev => ({
           ...prev,
           email: "Email already exists"
         }));
-      } else if (err.response?.status === 400) {
-        const errorMessage = err.response?.data?.message;
-        if (errorMessage?.includes("email")) {
+      } else if (status === 400) {
+        if (/email/i.test(errorMessage)) {
           setError("Invalid email format. Please check and try again.");
-          setFieldErrors(prev => ({
-            ...prev,
-            email: "Invalid email"
-          }));
+          setFieldErrors(prev => ({ ...prev, email: "Invalid email" }));
         } else {
           setError(errorMessage || "Invalid signup data. Please check your input.");
         }
-      } else if (err.response?.status === 500) {
+      } else if (status === 500) {
         setError("Server error. Please try again later.");
       } else {
-        setError(
-          err.response?.data?.message || 
-          err.message || 
-          "Signup failed. Please try again."
-        );
+        setError(errorMessage);
       }
     } finally {
       setLoading(false);

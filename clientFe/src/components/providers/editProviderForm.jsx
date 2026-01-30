@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { MapPin, Loader2, Building2, FileText, MapPinned, X } from "lucide-react";
 import ImageUploadSection from "./imageUploadSection.jsx";
 import { updateProviderApi, uploadProviderImagesApi, deleteProviderImageApi } from "../../api/provider.api.js";
@@ -13,7 +12,6 @@ import { updateProviderApi, uploadProviderImagesApi, deleteProviderImageApi } fr
  * - Show existing images with delete capability
  */
 const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
-  const navigate = useNavigate();
 
   const [businessName, setBusinessName] = useState(provider?.businessName || "");
   const [description, setDescription] = useState(provider?.description || "");
