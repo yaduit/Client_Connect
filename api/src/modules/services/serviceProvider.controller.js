@@ -2,6 +2,7 @@ import serviceProviderModel from "./serviceProvider.model.js";
 import categoryModel from "../categories/category.model.js";
 import userModel from "../users/user.model.js";
 import mongoose from 'mongoose';
+import cloudinary from '../../config/cloudinary.config.js'
 
 /**
  * Get provider by ID (public endpoint)

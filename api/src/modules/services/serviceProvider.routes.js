@@ -13,13 +13,6 @@ import upload from '../../middlewares/imageUpload.middleware.js';
 
 const router = express.Router();
 
-// ============ PUBLIC ROUTES ============
-
-/**
- * GET /api/providers/:id
- * Get provider details by ID (public access)
- */
-router.get('/:id', getProviderById);
 
 // ============ PRIVATE ROUTES (Authentication Required) ============
 
@@ -28,6 +21,14 @@ router.get('/:id', getProviderById);
  * Get current user's provider profile
  */
 router.get('/me', authMiddleware, getMyProvider);
+
+// ============ PUBLIC ROUTES ============
+/**
+ * GET /api/providers/:id
+ * Get provider details by ID (public access)
+ */
+router.get('/:id', getProviderById);
+
 
 /**
  * POST /api/providers/register

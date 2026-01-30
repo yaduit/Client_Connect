@@ -1,148 +1,172 @@
 import mongoose from 'mongoose';
 
 const serviceProviderSchema = new mongoose.Schema({
-    userId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user',
-        required: true,
+  // User reference
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+    required: true,
+    unique: true
+  },
+
+  // Basic info
+  businessName: {
+    type: String,
+    required: true,
+    trim: true,
+    minlength: 3,
+    maxlength: 100
+  },
+
+  description: {
+    type: String,
+    trim: true,
+    maxlength: 500
+  },
+
+  // Category info
+  categoryId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'category',
+    required: true
+  },
+
+  subCategorySlug: {
+    type: String,
+    required: true,
+    lowercase: true,
+    trim: true
+  },
+
+  // Location
+  location: {
+    city: {
+      type: String,
+      required: true,
+      trim: true
     },
-    categoryId:{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'category',
-        required: true
+    state: {
+      type: String,
+      required: true,
+      trim: true
     },
-    subCategorySlug:{
+    geo: {
+      type: {
         type: String,
+        enum: ['Point'],
+        default: 'Point'
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude]
         required: true,
-        lowercase: true,
-        trim: true
-    },
-    businessName:{
-        type: String,
-        required: true,
-        trim: true
-    },
-    description:{
-        type: String,
-        trim: true,
-    },
-    
-    // Images array for service photos with Cloudinary URLs
-    images: [
-      {
-        url: {
-          type: String,
-          required: true,
-          trim: true
-        },
-        publicId: {
-          type: String,
-          required: true,
-          trim: true
+        validate: {
+          validator: (v) => v.length === 2,
+          message: 'Coordinates must be [longitude, latitude]'
         }
       }
-    ],
-    
-    location:{
-        city: String,
-        state: String,
-        geo:{
-            type:{
-                type: String,
-                enum: ['Point'],
-                default: 'Point'
-            },
-            coordinates:{
-                type: [Number],
-                required: true,
-                validate:{
-                    validator: v => v.length === 2,
-                    message: 'Coordinates must be [lng,lat]'
-                }
-            }
-        }
-    },
-    isActive:{
-        type: Boolean,
-        default: true
-    },
-    
-    // Premium account status
-    isPremium: {
-        type: Boolean,
-        default: false
-    },
-    
-    ratingAverage:{
-        type: Number,
-        min: 0,
-        max: 5,
-        default: 0
-    },
-    totalReviews:{
-        type: Number,
-        default: 0
-    },
-    
-    // Service metrics
-    totalViews: {
-        type: Number,
-        default: 0,
-        min: 0
-    },
-    totalInquiries: {
-        type: Number,
-        default: 0,
-        min: 0
-    },
-    totalBookings: {
-        type: Number,
-        default: 0,
-        min: 0
-    },
-    
-    // Performance metrics
-    avgResponseTime: {
-        type: Number,
-        default: 24,
-        min: 0
-    },
-    completionRate: {
-        type: Number,
-        default: 100,
-        min: 0,
-        max: 100
-    },
-    
-    // Auto-generated URL slug
-    slug: {
-        type: String,
-        unique: true,
-        sparse: true,
-        lowercase: true,
-        trim: true
     }
-    
-},{timestamps: true});
+  },
+
+  // Service images
+  images: [
+    {
+      url: {
+        type: String,
+        required: true,
+        trim: true
+      },
+      publicId: {
+        type: String,
+        required: true,
+        trim: true
+      }
+    }
+  ],
+
+  // Status
+  isActive: {
+    type: Boolean,
+    default: true
+  },
+
+  isPremium: {
+    type: Boolean,
+    default: false
+  },
+
+  // Public URL slug
+  slug: {
+    type: String,
+    unique: true,
+    sparse: true,
+    lowercase: true,
+    trim: true
+  },
+
+  // Metrics
+  totalViews: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+
+  totalInquiries: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+
+  totalBookings: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+
+  // Performance metrics
+  ratingAverage: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5
+  },
+
+  totalReviews: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+
+  avgResponseTime: {
+    type: Number,
+    default: 24, // hours
+    min: 0
+  },
+
+  completionRate: {
+    type: Number,
+    default: 100, // percentage
+    min: 0,
+    max: 100
+  }
+}, {
+  timestamps: true,
+  collection: 'serviceproviders'
+});
 
 // ============ INDEXES ============
 
 // Geospatial index for location-based queries
 serviceProviderSchema.index({ 'location.geo': '2dsphere' });
 
-// Compound index for category and subcategory lookups
-serviceProviderSchema.index({
-  categoryId: 1,
-  subCategorySlug: 1,
-});
 
-// Index for user lookups
-serviceProviderSchema.index({ userId: 1 });
 
-// Index for filtering active providers
+// Category search
+serviceProviderSchema.index({ categoryId: 1, subCategorySlug: 1 });
+
+// Status filtering
 serviceProviderSchema.index({ isActive: 1 });
 
-// Compound index for sorting by rating
+// Sorting by rating
 serviceProviderSchema.index({ ratingAverage: -1, totalReviews: -1 });
 
 // ============ INSTANCE METHODS ============
@@ -194,7 +218,7 @@ serviceProviderSchema.statics.findNearby = function (coordinates, maxDistance = 
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates: coordinates
+          coordinates
         },
         $maxDistance: maxDistance
       }
@@ -212,17 +236,17 @@ serviceProviderSchema.statics.findByCategoryNearby = function (
 ) {
   return this.find({
     isActive: true,
-    categoryId: categoryId,
+    categoryId,
     'location.geo': {
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates: coordinates
+          coordinates
         },
         $maxDistance: maxDistance
       }
     }
-  }).sort({ ratingAverage: -1 });
+  }).sort({ ratingAverage: -1, totalReviews: -1 });
 };
 
 /**
@@ -232,6 +256,16 @@ serviceProviderSchema.statics.findTopRated = function (limit = 10) {
   return this.find({ isActive: true })
     .sort({ ratingAverage: -1, totalReviews: -1 })
     .limit(limit);
+};
+
+/**
+ * Find providers by category
+ */
+serviceProviderSchema.statics.findByCategory = function (categoryId) {
+  return this.find({
+    isActive: true,
+    categoryId
+  }).sort({ ratingAverage: -1 });
 };
 
 export default mongoose.model('serviceProvider', serviceProviderSchema);
