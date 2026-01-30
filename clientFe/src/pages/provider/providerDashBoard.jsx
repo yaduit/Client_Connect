@@ -1,40 +1,41 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Home,
   Eye,
   MessageSquare,
-  Star,
-  Clock,
-  Edit3,
-  Plus,
   TrendingUp,
+  Plus,
   AlertCircle,
+  Loader2,
+  Edit3,
+  Power,
   Trash2,
   X,
 } from "lucide-react";
-import ProviderServiceCard from "../../components/providers/providerServiceCard.jsx";
-import ProviderEmptyState from "../../components/providers/providerEmptyState.jsx";
-import StatCard from "../../components/providers/statCard.jsx";
-import EditProviderModal from "../../components/providers/editProviderModel.jsx";
 import { useMyProviderService } from "../../hooks/useMyProviderService.jsx";
-import { deleteProviderImageApi } from "../../api/provider.api.js";
+import { toggleProviderStatusApi, deleteProviderImageApi } from "../../api/provider.api.js";
+import EditProviderModal from "../../components/providers/editProviderModel.jsx";
 
 const ProviderDashboard = () => {
-  // ============ STATE ============
   const { provider, loading, error, setProvider, refetch } = useMyProviderService();
+
+  // Modal states
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [deletingImageId, setDeletingImageId] = useState(null);
-  const [deleteError, setDeleteError] = useState(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [showImageModal, setShowImageModal] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // Action states
+  const [statusLoading, setStatusLoading] = useState(false);
+  const [deleteImageLoading, setDeleteImageLoading] = useState(null);
 
   // ============ LOADING STATE ============
   if (loading) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="w-12 h-12 rounded-full border-4 border-slate-300 border-t-emerald-600 animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 font-medium">Loading your dashboard...</p>
+          <Loader2 className="w-12 h-12 text-emerald-600 animate-spin mx-auto mb-4" />
+          <p className="text-gray-700 font-medium">Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -43,18 +44,14 @@ const ProviderDashboard = () => {
   // ============ ERROR STATE ============
   if (error) {
     return (
-      <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4">
-        <div className="bg-white rounded-2xl shadow-lg p-8 max-w-md text-center border border-red-100">
-          <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <AlertCircle className="w-8 h-8 text-red-600" />
-          </div>
-          <h2 className="text-xl font-semibold text-slate-900 mb-2">
-            Something went wrong
-          </h2>
-          <p className="text-slate-600 mb-6">{error}</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="bg-white rounded-xl shadow-lg border border-red-200 p-8 max-w-sm w-full text-center">
+          <AlertCircle className="w-14 h-14 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Dashboard</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
+            className="px-6 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition"
           >
             Try Again
           </button>
@@ -65,360 +62,419 @@ const ProviderDashboard = () => {
 
   // ============ EMPTY STATE ============
   if (!provider) {
-    return <ProviderEmptyState />;
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+        <div className="text-center">
+          <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Provider Profile Not Found</h2>
+          <p className="text-gray-600 mb-6">Please complete your provider registration</p>
+          <Link
+            to="/provider/onboarding"
+            className="inline-block px-6 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 transition"
+          >
+            Complete Registration
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   // ============ HANDLERS ============
-  const handleEditModalOpen = () => {
-    setIsEditModalOpen(true);
-  };
-
-  const handleEditModalClose = () => {
-    setIsEditModalOpen(false);
-  };
-
-  const handleEditSuccess = (updatedProvider) => {
-    setProvider(updatedProvider);
-    setIsEditModalOpen(false);
-    // Refetch to get latest data
-    refetch();
-  };
-
-  const handleStatusChange = (updatedProvider) => {
-    setProvider(updatedProvider);
-  };
-
-  // Handle delete image
-  const handleDeleteImage = async (publicId) => {
-    if (!window.confirm("Are you sure you want to delete this image?")) {
-      return;
-    }
-
+  const handleStatusToggle = async () => {
+    setStatusLoading(true);
     try {
-      setDeletingImageId(publicId);
-      setDeleteError(null);
+      const response = await toggleProviderStatusApi(!provider.isActive);
+      if (response.success) {
+        setProvider(response.provider);
+      }
+    } catch (err) {
+      console.error("Error toggling status:", err);
+    } finally {
+      setStatusLoading(false);
+    }
+  };
 
+  const handleDeleteImage = async (publicId) => {
+    if (!window.confirm("Delete this image? This action cannot be undone.")) return;
+
+    setDeleteImageLoading(publicId);
+    try {
       const response = await deleteProviderImageApi(publicId);
-
-      // Update provider with new images
-      setProvider(response.provider);
-
-      // Show success toast or message
-      alert("Image deleted successfully");
+      if (response.success) {
+        setProvider(response.provider);
+      }
     } catch (err) {
       console.error("Error deleting image:", err);
-      setDeleteError(err.message || "Failed to delete image");
+      alert("Failed to delete image. Please try again.");
     } finally {
-      setDeletingImageId(null);
+      setDeleteImageLoading(null);
     }
   };
 
-  // ============ STATS DATA ============
-  const stats = [
-    {
-      icon: Eye,
-      label: "Total Views",
-      value: provider.totalViews || "0",
-      color: "emerald",
-      trend: provider.viewsTrend || "+12%",
-    },
-    {
-      icon: MessageSquare,
-      label: "Inquiries",
-      value: provider.totalInquiries || "0",
-      color: "blue",
-      trend: provider.inquiriesTrend || "+5%",
-    },
-    {
-      icon: Star,
-      label: "Rating",
-      value: provider.ratingAverage || "0",
-      suffix: "⭐",
-      color: "amber",
-      reviews: provider.totalReviews || "0",
-    },
-    {
-      icon: TrendingUp,
-      label: "Bookings",
-      value: provider.totalBookings || "0",
-      color: "purple",
-      trend: provider.bookingsTrend || "+8%",
-    },
-  ];
-
   const images = provider.images || [];
-  const hasImages = images.length > 0;
+  const hasServices = !!provider;
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 lg:py-12">
+    <div className="min-h-screen bg-gray-50">
+      {/* ============ NAVBAR ============ */}
+      <nav className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+          <div className="flex items-center justify-between">
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 text-gray-700 hover:text-emerald-600 transition font-medium text-sm"
+            >
+              <Home className="w-4 h-4" />
+              Back to Home
+            </Link>
+            <h1 className="text-base sm:text-lg font-bold text-gray-900">Provider Dashboard</h1>
+            <div className="w-24"></div>
+          </div>
+        </div>
+      </nav>
+
+      {/* ============ MAIN CONTENT ============ */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         
         {/* ============ HEADER SECTION ============ */}
-        <div className="mb-8 sm:mb-10 lg:mb-12">
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div className="mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">
-                Welcome back, {provider.businessName}
-              </h1>
-              <p className="text-slate-600 text-sm sm:text-base max-w-2xl">
-                You're all set! Manage your service, track performance, and grow your business.
+              <h2 className="text-3xl font-bold text-gray-900">{provider.businessName}</h2>
+              <p className="text-gray-600 mt-1">
+                Welcome back! Here's your service overview.
               </p>
             </div>
-            <button
-              onClick={handleEditModalOpen}
-              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all duration-200 hover:shadow-lg active:scale-95 font-medium text-sm sm:text-base whitespace-nowrap"
+            <Link
+              to={`/providers/${provider._id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2.5 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 border border-blue-200 transition font-medium text-sm"
             >
-              <Edit3 className="w-4 h-4" />
-              Edit Service
+              <Eye className="w-4 h-4" />
+              View Public Profile
+            </Link>
+          </div>
+
+          {/* Status Badge */}
+          <div className="flex items-center gap-3">
+            <span
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-semibold ${
+                provider.isActive
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-gray-100 text-gray-700"
+              }`}
+            >
+              <span className={`w-2.5 h-2.5 rounded-full ${provider.isActive ? "bg-emerald-600" : "bg-gray-400"}`}></span>
+              {provider.isActive ? "Active & Visible" : "Inactive"}
+            </span>
+            <p className="text-sm text-gray-600">
+              {provider.location?.city}, {provider.location?.state}
+            </p>
+          </div>
+        </div>
+
+        {/* ============ STATS ROW ============ */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          {/* Total Services */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-600">Total Services</p>
+              <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-blue-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">1</p>
+            <p className="text-xs text-gray-500 mt-1">Your active listing</p>
+          </div>
+
+          {/* Active Services */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-600">Active Services</p>
+              <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                <Power className="w-5 h-5 text-emerald-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{provider.isActive ? 1 : 0}</p>
+            <p className="text-xs text-gray-500 mt-1">{provider.isActive ? "Live and visible" : "Currently disabled"}</p>
+          </div>
+
+          {/* Total Views */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-600">Views</p>
+              <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                <Eye className="w-5 h-5 text-purple-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{provider.totalViews || 0}</p>
+            <p className="text-xs text-gray-500 mt-1">Total profile views</p>
+          </div>
+
+          {/* Total Inquiries */}
+          <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-sm font-medium text-gray-600">Inquiries</p>
+              <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-orange-600" />
+              </div>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">{provider.totalInquiries || 0}</p>
+            <p className="text-xs text-gray-500 mt-1">Customer requests</p>
+          </div>
+        </div>
+
+        {/* ============ ACTIONS ROW ============ */}
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled
+              title="Multiple services coming soon"
+            >
+              <Plus className="w-5 h-5" />
+              Add New Service
+            </button>
+            <button
+              onClick={handleStatusToggle}
+              disabled={statusLoading}
+              className={`flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition font-medium ${
+                provider.isActive
+                  ? "bg-red-50 text-red-700 hover:bg-red-100 border border-red-200"
+                  : "bg-green-50 text-green-700 hover:bg-green-100 border border-green-200"
+              } disabled:opacity-50 disabled:cursor-not-allowed`}
+            >
+              {statusLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <Power className="w-5 h-5" />
+              )}
+              {provider.isActive ? "Disable Service" : "Enable Service"}
             </button>
           </div>
         </div>
 
-        {/* ============ STATS GRID ============ */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-10 lg:mb-12">
-          {stats.map((stat, idx) => (
-            <StatCard key={idx} stat={stat} />
-          ))}
-        </div>
+        {/* ============ MY SERVICES SECTION ============ */}
+        <div>
+          <h3 className="text-xl font-bold text-gray-900 mb-6">My Services</h3>
 
-        {/* ============ IMAGE GALLERY SECTION ============ */}
-        {hasImages && (
-          <div className="mb-8 sm:mb-10 lg:mb-12">
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
-                  <div className="w-1 h-6 bg-emerald-600 rounded-full"></div>
-                  Service Images ({images.length}/4)
-                </h3>
-                {images.length < 4 && (
-                  <button
-                    onClick={handleEditModalOpen}
-                    className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors border border-emerald-200"
-                  >
-                    <Plus className="w-4 h-4" />
-                    Add Image
-                  </button>
-                )}
+          {!hasServices ? (
+            // Empty State
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-12 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-8 h-8 text-gray-400" />
               </div>
-
-              {/* Delete Error */}
-              {deleteError && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-                  <AlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
-                  <p className="text-sm text-red-700">{deleteError}</p>
-                </div>
-              )}
-
-              {/* Image Gallery Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {images.map((image, idx) => (
-                  <div
-                    key={image.publicId}
-                    className="relative aspect-square rounded-lg overflow-hidden border-2 border-slate-200 bg-slate-50 group cursor-pointer"
-                    onClick={() => {
-                      setSelectedImageIndex(idx);
-                      setShowImageModal(true);
-                    }}
-                  >
-                    <img
-                      src={image.url}
-                      alt={`Service image ${idx + 1}`}
-                      className="w-full h-full object-cover"
-                    />
-
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                      <div className="text-white text-center">
-                        <p className="text-xs font-medium mb-2">Click to view</p>
-                      </div>
-                    </div>
-
-                    {/* Delete Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteImage(image.publicId);
-                      }}
-                      disabled={deletingImageId === image.publicId}
-                      className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity disabled:cursor-not-allowed"
-                      title="Delete image"
-                    >
-                      {deletingImageId === image.publicId ? (
-                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      ) : (
-                        <Trash2 className="w-4 h-4" />
-                      )}
-                    </button>
-
-                    {/* Image Number Badge */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/60 to-transparent px-2 py-2">
-                      <p className="text-xs text-white font-medium">{idx + 1}/{images.length}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* ============ SERVICE CARD SECTION ============ */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-          
-          {/* Service Card - Full Width on Mobile */}
-          <div className="lg:col-span-2">
-            <ProviderServiceCard 
-              provider={provider}
-              onStatusChange={handleStatusChange}
-              onEditClick={handleEditModalOpen}
-            />
-          </div>
-
-          {/* Quick Actions Panel */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7 h-fit sticky top-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-6 flex items-center gap-2">
-              <div className="w-1 h-6 bg-emerald-600 rounded-full"></div>
-              Quick Actions
-            </h3>
-
-            {/* Service Status */}
-            <div className="mb-6 pb-6 border-b border-slate-200">
-              <p className="text-sm text-slate-600 font-medium mb-2">Service Status</p>
-              <div className="flex items-center gap-3">
-                <div
-                  className={`w-3 h-3 rounded-full animate-pulse ${
-                    provider.isActive ? "bg-emerald-500" : "bg-slate-400"
-                  }`}
-                ></div>
-                <span className="font-semibold text-slate-900">
-                  {provider.isActive ? "Active & Visible" : "Inactive"}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 mt-2">
-                {provider.isActive
-                  ? "Your service is live and discoverable"
-                  : "Your service is hidden from customers"}
-              </p>
-            </div>
-
-            {/* Performance Insights */}
-            <div className="mb-6 pb-6 border-b border-slate-200">
-              <p className="text-sm text-slate-600 font-medium mb-3">Performance</p>
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-600">Response Time</span>
-                  <span className="font-semibold text-emerald-600">
-                    {provider.avgResponseTime || "2h"}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-600">Completion Rate</span>
-                  <span className="font-semibold text-emerald-600">
-                    {provider.completionRate || "98%"}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="space-y-3">
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">No Services Yet</h4>
+              <p className="text-gray-600 mb-6">Start by creating your first service to begin receiving customer inquiries</p>
               <button
-                onClick={handleEditModalOpen}
-                className={`w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 ${
-                  provider.isActive
-                    ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
-                    : "bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200"
-                }`}
-              >
-                <Edit3 className="w-4 h-4" />
-                Edit Details
-              </button>
-
-              <Link
-                to="/provider/services/new"
-                className="w-full py-3 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200"
+                onClick={() => setIsEditModalOpen(true)}
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium"
               >
                 <Plus className="w-4 h-4" />
-                Add Service
-              </Link>
+                Create Service
+              </button>
             </div>
+          ) : (
+            // Service Grid
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Service Card */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition">
+                {/* Cover Image */}
+                <div className="aspect-video bg-gray-200 overflow-hidden group cursor-pointer">
+                  {images.length > 0 ? (
+                    <img
+                      src={images[0].url}
+                      alt={provider.businessName}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                      onClick={() => {
+                        setSelectedImageIndex(0);
+                        setShowImageModal(true);
+                      }}
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-gray-400">
+                      <Plus className="w-12 h-12" />
+                    </div>
+                  )}
+                </div>
 
-            {/* Help Tip */}
-            <div className="mt-6 pt-6 border-t border-slate-200">
-              <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-                <p className="text-xs font-medium text-blue-900 mb-1">💡 Tip</p>
-                <p className="text-xs text-blue-800 leading-relaxed">
-                  Services with {images.length < 4 ? '4 high-quality photos' : 'complete profiles'} get 3x more inquiries!
-                </p>
+                {/* Card Content */}
+                <div className="p-6">
+                  {/* Title & Status */}
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex-1">
+                      <h4 className="text-lg font-bold text-gray-900">{provider.businessName}</h4>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {provider.categoryId?.name} • {provider.subCategorySlug}
+                      </p>
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ml-2 ${
+                      provider.isActive
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}>
+                      {provider.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+
+                  {/* Location */}
+                  {provider.location && (
+                    <p className="text-sm text-gray-600 mb-4">
+                      📍 {provider.location.city}, {provider.location.state}
+                    </p>
+                  )}
+
+                  {/* Description */}
+                  {provider.description && (
+                    <p className="text-sm text-gray-600 line-clamp-2 mb-4">{provider.description}</p>
+                  )}
+
+                  {/* Images Count */}
+                  {images.length > 0 && (
+                    <div className="mb-4 pb-4 border-t border-gray-200">
+                      <p className="text-xs font-medium text-gray-600 mb-2">
+                        Images ({images.length}/4)
+                      </p>
+                      <div className="grid grid-cols-4 gap-2">
+                        {images.map((image, idx) => (
+                          <div
+                            key={image.publicId}
+                            className="relative aspect-square rounded overflow-hidden border border-gray-200 group/img"
+                          >
+                            <img
+                              src={image.url}
+                              alt={`Service ${idx + 1}`}
+                              className="w-full h-full object-cover group-hover/img:opacity-75 transition cursor-pointer"
+                              onClick={() => {
+                                setSelectedImageIndex(idx);
+                                setShowImageModal(true);
+                              }}
+                            />
+                            <button
+                              onClick={() => handleDeleteImage(image.publicId)}
+                              disabled={deleteImageLoading === image.publicId}
+                              className="absolute inset-0 flex items-center justify-center bg-black/0 hover:bg-black/50 transition opacity-0 hover:opacity-100 group-hover/img:opacity-100"
+                              title="Delete image"
+                            >
+                              {deleteImageLoading === image.publicId ? (
+                                <Loader2 className="w-5 h-5 text-white animate-spin" />
+                              ) : (
+                                <Trash2 className="w-5 h-5 text-white" />
+                              )}
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Stats */}
+                  <div className="grid grid-cols-3 gap-3 mb-4 p-3 bg-gray-50 rounded-lg">
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600">Views</p>
+                      <p className="text-lg font-bold text-gray-900">{provider.totalViews || 0}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600">Inquiries</p>
+                      <p className="text-lg font-bold text-gray-900">{provider.totalInquiries || 0}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600">Rating</p>
+                      <p className="text-lg font-bold text-gray-900">{provider.ratingAverage || "—"}</p>
+                    </div>
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setIsEditModalOpen(true)}
+                      className="flex-1 px-3 py-2 bg-emerald-100 text-emerald-700 rounded-lg hover:bg-emerald-200 transition font-medium text-sm flex items-center justify-center gap-1"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                      Edit
+                    </button>
+                    <Link
+                      to={`/providers/${provider._id}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition font-medium text-sm flex items-center justify-center gap-1 border border-gray-300"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Preview
+                    </Link>
+                  </div>
+                </div>
+              </div>
+
+              {/* Sidebar Info */}
+              <div className="space-y-4">
+                {/* Rating Card */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h5 className="font-semibold text-gray-900 mb-4">Rating</h5>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="flex gap-0.5">
+                      {[...Array(5)].map((_, i) => (
+                        <span key={i} className={`text-xl ${
+                          i < Math.round(provider.ratingAverage || 0)
+                            ? "text-amber-400"
+                            : "text-gray-300"
+                        }`}>★</span>
+                      ))}
+                    </div>
+                    <span className="text-lg font-bold text-gray-900">{provider.ratingAverage || "—"}</span>
+                  </div>
+                  <p className="text-sm text-gray-600">{provider.totalReviews || 0} reviews</p>
+                </div>
+
+                {/* Performance Card */}
+                <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+                  <h5 className="font-semibold text-gray-900 mb-4">Performance</h5>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Response Time</span>
+                      <span className="font-medium text-gray-900">{provider.avgResponseTime || "—"}h</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Completion Rate</span>
+                      <span className="font-medium text-gray-900">{provider.completionRate || 0}%</span>
+                    </div>
+                    <div className="flex justify-between pt-3 border-t border-gray-200">
+                      <span className="text-gray-600">Total Bookings</span>
+                      <span className="font-medium text-gray-900">{provider.totalBookings || 0}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Tips */}
+                <div className="bg-blue-50 rounded-lg border border-blue-200 p-6">
+                  <h5 className="font-semibold text-blue-900 mb-3">💡 Quick Tips</h5>
+                  <ul className="space-y-2 text-sm text-blue-800">
+                    <li>✓ Keep your profile updated and professional</li>
+                    <li>✓ Add high-quality service photos</li>
+                    <li>✓ Respond quickly to inquiries</li>
+                    <li>✓ Maintain excellent service quality</li>
+                  </ul>
+                </div>
               </div>
             </div>
-          </div>
-
-        </div>
-
-        {/* ============ ADDITIONAL INFO SECTION ============ */}
-        <div className="mt-12 sm:mt-14 lg:mt-16 grid grid-cols-1 sm:grid-cols-2 gap-6">
-          
-          {/* Recent Activity */}
-          <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-7">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-              <Clock className="w-5 h-5 text-slate-600" />
-              Recent Activity
-            </h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-                <span className="text-slate-600">New inquiry from Sarah M.</span>
-                <span className="text-xs text-slate-500">2h ago</span>
-              </div>
-              <div className="flex justify-between items-center pb-3 border-b border-slate-100">
-                <span className="text-slate-600">5-star review added</span>
-                <span className="text-xs text-slate-500">1d ago</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-slate-600">Service view spike</span>
-                <span className="text-xs text-slate-500">3d ago</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Growth Tips */}
-          <div className="bg-linear-to-br from-emerald-50 to-teal-50 rounded-2xl shadow-sm border border-emerald-200 p-6 sm:p-7">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-emerald-600" />
-              Grow Your Business
-            </h3>
-            <div className="space-y-3 text-sm">
-              <div className="flex gap-3">
-                <div className="w-2 h-2 bg-emerald-600 rounded-full mt-1.5 shrink-0"></div>
-                <p className="text-slate-700">
-                  Respond to inquiries within 2 hours
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <div className="w-2 h-2 bg-emerald-600 rounded-full mt-1.5 shrink-0"></div>
-                <p className="text-slate-700">
-                  {images.length < 4 ? 'Add more high-quality photos' : 'Keep your photos updated'}
-                </p>
-              </div>
-              <div className="flex gap-3">
-                <div className="w-2 h-2 bg-emerald-600 rounded-full mt-1.5 shrink-0"></div>
-                <p className="text-slate-700">
-                  Maintain 5-star service quality
-                </p>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
-      {/* ============ EDIT MODAL ============ */}
+      {/* ============ MODALS ============ */}
       <EditProviderModal
         provider={provider}
         isOpen={isEditModalOpen}
-        onClose={handleEditModalClose}
-        onSuccess={handleEditSuccess}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={(updated) => {
+          setProvider(updated);
+          setIsEditModalOpen(false);
+          refetch();
+        }}
       />
 
-      {/* ============ IMAGE PREVIEW MODAL ============ */}
+      {/* Image Preview Modal */}
       {showImageModal && images[selectedImageIndex] && (
         <div
           className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
@@ -428,47 +484,42 @@ const ProviderDashboard = () => {
             className="relative bg-white rounded-lg max-w-2xl w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button
               onClick={() => setShowImageModal(false)}
-              className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full z-10"
+              className="absolute top-3 right-3 bg-red-500 text-white p-2 rounded-full hover:bg-red-600 z-10"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5" />
             </button>
 
-            {/* Image */}
             <img
               src={images[selectedImageIndex].url}
               alt={`Service image ${selectedImageIndex + 1}`}
               className="w-full h-auto max-h-96 object-cover rounded-lg"
             />
 
-            {/* Image Counter */}
-            <div className="text-center mt-4 text-slate-600">
-              {selectedImageIndex + 1} of {images.length}
-            </div>
-
-            {/* Navigation */}
-            <div className="flex gap-4 justify-center mt-4 mb-4">
+            <div className="flex gap-3 justify-center mt-4 mb-4 px-4">
               <button
                 onClick={() =>
                   setSelectedImageIndex((prev) =>
                     prev === 0 ? images.length - 1 : prev - 1
                   )
                 }
-                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg transition"
               >
-                Previous
+                ← Prev
               </button>
+              <span className="text-sm text-gray-600 py-2">
+                {selectedImageIndex + 1} / {images.length}
+              </span>
               <button
                 onClick={() =>
                   setSelectedImageIndex((prev) =>
                     prev === images.length - 1 ? 0 : prev + 1
                   )
                 }
-                className="px-4 py-2 bg-slate-200 hover:bg-slate-300 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 rounded-lg transition"
               >
-                Next
+                Next →
               </button>
             </div>
           </div>

@@ -2,8 +2,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCategories } from "../../hooks/useCategories.jsx";
 import { useAuth } from "../../context/auth/useAuth.js";
-import { registerProviderApi, uploadProviderImagesApi } from "../../api/provider.api.js";
-import ImageUploadSection from './imageUploadSection.jsx';
+import {
+  registerProviderApi,
+  uploadProviderImagesApi,
+} from "../../api/provider.api.js";
+import ImageUploadSection from "./imageUploadSection.jsx";
 import { MapPin, Loader2, Building2, FileText, MapPinned } from "lucide-react";
 
 const ProviderForm = () => {
@@ -136,7 +139,9 @@ const ProviderForm = () => {
           console.error("Image upload failed:", imageError);
           // Don't fail the entire flow if image upload fails
           // Provider is already created
-          setError("Service published but image upload failed. Please add images later from your dashboard.");
+          setError(
+            "Service published but image upload failed. Please add images later from your dashboard.",
+          );
         }
       }
 
@@ -170,8 +175,16 @@ const ProviderForm = () => {
         {/* Error Alert */}
         {error && (
           <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg flex items-start gap-3">
-            <svg className="w-5 h-5 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            <svg
+              className="w-5 h-5 mt-0.5 shrink-0"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
             </svg>
             <span className="font-medium">{error}</span>
           </div>
@@ -188,7 +201,10 @@ const ProviderForm = () => {
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Business Name */}
           <div className="space-y-2">
-            <label htmlFor="businessName" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="businessName"
+              className="block text-sm font-medium text-gray-700"
+            >
               Business Name <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -200,7 +216,9 @@ const ProviderForm = () => {
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
                 className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 ${
-                  fieldErrors.businessName ? "border-red-500" : "border-gray-300"
+                  fieldErrors.businessName
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
                 required
               />
@@ -214,7 +232,10 @@ const ProviderForm = () => {
 
           {/* Category */}
           <div className="space-y-2">
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="category"
+              className="block text-sm font-medium text-gray-700"
+            >
               Service Category <span className="text-red-500">*</span>
             </label>
             <select
@@ -247,7 +268,10 @@ const ProviderForm = () => {
           {/* Subcategory */}
           {selectedCategory && (
             <div className="space-y-2">
-              <label htmlFor="subcategory" className="block text-sm font-medium text-gray-700">
+              <label
+                htmlFor="subcategory"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Subcategory <span className="text-red-500">*</span>
               </label>
               <select
@@ -255,7 +279,9 @@ const ProviderForm = () => {
                 value={subCategorySlug}
                 onChange={(e) => setSubCategorySlug(e.target.value)}
                 className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 ${
-                  fieldErrors.subCategorySlug ? "border-red-500" : "border-gray-300"
+                  fieldErrors.subCategorySlug
+                    ? "border-red-500"
+                    : "border-gray-300"
                 }`}
                 required
               >
@@ -276,7 +302,10 @@ const ProviderForm = () => {
 
           {/* Description */}
           <div className="space-y-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+            >
               Service Description <span className="text-red-500">*</span>
             </label>
             <div className="relative">
@@ -320,7 +349,11 @@ const ProviderForm = () => {
                 type="button"
                 onClick={handleUseMyLocation}
                 disabled={locationLoading}
-                className="flex items-center gap-2 text-green-600 hover:text-green-700 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className={`flex items-center gap-2 font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
+                  coords
+                    ? "hidden" // Hide button once location is set
+                    : "text-green-600 hover:text-green-700"
+                }`}
               >
                 {locationLoading ? (
                   <>
@@ -344,7 +377,10 @@ const ProviderForm = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="city"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   City <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -366,7 +402,10 @@ const ProviderForm = () => {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="state"
+                  className="block text-sm font-medium text-gray-700"
+                >
                   State <span className="text-red-500">*</span>
                 </label>
                 <input

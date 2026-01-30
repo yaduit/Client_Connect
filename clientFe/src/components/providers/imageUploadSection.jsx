@@ -56,37 +56,60 @@ const ImageUploadSection = ({
     }
 
     const validFiles = [];
-    const newPreviews = [];
 
+    // First, collect all valid files
     for (const file of files) {
-      // Validate file
       const validationError = validateFile(file);
       if (validationError) {
         setError(validationError);
         continue;
       }
-
       validFiles.push(file);
+    }
 
-      // Create preview URL
+    // If no valid files, return early
+    if (validFiles.length === 0) {
+      return;
+    }
+
+    // Then create previews for valid files
+    const newPreviews = [];
+    let completedReads = 0;
+
+    validFiles.forEach((file, index) => {
       const reader = new FileReader();
+      
       reader.onloadend = () => {
-        newPreviews.push({
-          id: `${file.name}-${Date.now()}`,
+        newPreviews[index] = {
+          id: `${file.name}-${Date.now()}-${Math.random()}`,
           src: reader.result,
           name: file.name,
           file: file
-        });
+        };
 
-        // If all files are read, update state
-        if (newPreviews.length === validFiles.length) {
+        completedReads++;
+
+        // Once all files are read, update state
+        if (completedReads === validFiles.length) {
           setSelectedFiles((prev) => [...prev, ...validFiles]);
           setPreviews((prev) => [...prev, ...newPreviews]);
-          onImagesChange([...selectedFiles, ...validFiles]);
+          onImagesChange([...(selectedFiles || []), ...validFiles]);
         }
       };
+
+      reader.onerror = () => {
+        console.error(`Failed to read file: ${file.name}`);
+        completedReads++;
+        
+        if (completedReads === validFiles.length) {
+          setSelectedFiles((prev) => [...prev, ...validFiles]);
+          setPreviews((prev) => [...prev, ...newPreviews.filter(Boolean)]);
+          onImagesChange([...(selectedFiles || []), ...validFiles]);
+        }
+      };
+
       reader.readAsDataURL(file);
-    }
+    });
   };
 
   // Handle click on upload area
@@ -126,9 +149,9 @@ const ImageUploadSection = ({
   // Remove selected image
   const removeImage = (id) => {
     const updatedPreviews = previews.filter((p) => p.id !== id);
-    const updatedFiles = selectedFiles.filter((_, idx) => {
-      return previews[idx]?.id !== id;
-    });
+    const indexToRemove = previews.findIndex((p) => p.id === id);
+    
+    const updatedFiles = selectedFiles.filter((_, idx) => idx !== indexToRemove);
 
     setPreviews(updatedPreviews);
     setSelectedFiles(updatedFiles);
