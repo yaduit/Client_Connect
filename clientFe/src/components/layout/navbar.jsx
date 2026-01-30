@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/auth/useAuth";
 import { LogoutApi } from "../../api/auth.api.js";
@@ -8,14 +8,15 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, loading, isAuthenticated, logout } = useAuth();
 
-  // ⚠️ TEMPORARY DEBUG - Remove after testing
-  console.log("🔍 Navbar Render:", {
-    loading,
-    isAuthenticated,
-    user,
-    userRole: user?.role,
-    userInStorage: !!localStorage.getItem("user")
-  });
+  // ✅ DEBUG: Log auth state changes
+  useEffect(() => {
+    console.log("🔍 Navbar Auth State Updated:", {
+      isAuthenticated,
+      userRole: user?.role,
+      userName: user?.name,
+      loading,
+    });
+  }, [isAuthenticated, user, loading]);
 
   const handleBecomeProvider = () => {
     if (loading) {
@@ -148,6 +149,7 @@ const Navbar = () => {
                   </>
                 )}
 
+                {/* ✅ FIXED: Seeker role - Show "Become a Provider" button */}
                 {isAuthenticated && user?.role === "seeker" && (
                   <>
                     <span className="text-gray-700 font-medium">
@@ -168,6 +170,7 @@ const Navbar = () => {
                   </>
                 )}
 
+                {/* ✅ FIXED: Provider role - Show "Dashboard" link, NOT "Become a Provider" */}
                 {isAuthenticated && user?.role === "provider" && (
                   <>
                     <span className="text-gray-700 font-medium">
@@ -214,13 +217,35 @@ const Navbar = () => {
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-3">
             {/* CTA always visible on mobile */}
-            <button
-              onClick={() => handleNavigation(handleBecomeProvider)}
-              disabled={loading}
-              className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Provider
-            </button>
+            {!isAuthenticated && (
+              <button
+                onClick={() => handleNavigation(handleBecomeProvider)}
+                disabled={loading}
+                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Provider
+              </button>
+            )}
+
+            {/* ✅ FIXED: Provider mobile - Don't show "Become Provider" */}
+            {isAuthenticated && user?.role === "provider" && (
+              <Link
+                to="/provider/dashboard"
+                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm"
+              >
+                Dashboard
+              </Link>
+            )}
+
+            {/* ✅ FIXED: Seeker mobile - Show "Become Provider" */}
+            {isAuthenticated && user?.role === "seeker" && (
+              <button
+                onClick={() => handleNavigation(handleBecomeProvider)}
+                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm"
+              >
+                Provider
+              </button>
+            )}
 
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -341,6 +366,7 @@ const Navbar = () => {
                     </div>
                   )}
 
+                  {/* ✅ FIXED: Seeker mobile menu - Show "Become Provider" */}
                   {isAuthenticated && user?.role === "seeker" && (
                     <button
                       onClick={() => handleNavigation(handleBecomeProvider)}
@@ -350,6 +376,7 @@ const Navbar = () => {
                     </button>
                   )}
 
+                  {/* ✅ FIXED: Provider mobile menu - Show "Dashboard" */}
                   {isAuthenticated && user?.role === "provider" && (
                     <Link
                       to="/provider/dashboard"

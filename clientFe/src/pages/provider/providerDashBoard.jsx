@@ -228,10 +228,10 @@ const ProviderDashboard = () => {
         {/* ============ ACTIONS ROW ============ */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
           <div className="flex flex-col sm:flex-row gap-3">
+            {/* ✅ FIXED: Enable Add New Service button */}
             <button
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled
-              title="Multiple services coming soon"
+              onClick={() => setIsEditModalOpen(true)}
+              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium"
             >
               <Plus className="w-5 h-5" />
               Add New Service

@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "../../context/auth/useAuth.js";
 import { LoginApi } from "../../api/auth.api.js";
 import OAuthButton from "./oAuthButton.jsx";
+import { Mail, Lock } from "lucide-react";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -43,7 +44,14 @@ const LoginForm = () => {
         user: data.user,
       });
 
-      navigate(redirect, { replace: true });
+      // ✅ FIXED: Check user role for proper redirect
+      if (data.user.role === "provider") {
+        // Providers always go to dashboard (ignore redirect param)
+        navigate("/provider/dashboard", { replace: true });
+      } else {
+        // Seekers use redirect param or default to home
+        navigate(redirect, { replace: true });
+      }
     } catch (err) {
       console.error("❌ Login Error:", err);
       setError(err.message || "Invalid email or password");
@@ -64,30 +72,36 @@ const LoginForm = () => {
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
           Email
         </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="name@example.com"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          required
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400"
-        />
+        <div className="relative">
+          <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            id="email"
+            type="email"
+            placeholder="name@example.com"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            required
+            className="w-full pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400"
+          />
+        </div>
       </div>
 
       <div className="space-y-2">
         <label htmlFor="password" className="block text-sm font-medium text-gray-700">
           Password
         </label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Enter your password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          required
-          className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400"
-        />
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter your password"
+            value={form.password}
+            onChange={(e) => setForm({ ...form, password: e.target.value })}
+            required
+            className="w-full pl-11 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400"
+          />
+        </div>
       </div>
 
       <button
