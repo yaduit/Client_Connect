@@ -13,7 +13,8 @@ const ProviderDetails = () => {
       try {
         const data = await getProviderByIdApi(id);
         setProvider(data.provider);
-      } catch (err) {
+      } catch (error) {
+        console.error(error);
         setError("Failed to load provider");
       } finally {
         setLoading(false);

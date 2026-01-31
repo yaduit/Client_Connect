@@ -89,22 +89,29 @@ const ImageUploadSection = ({
 
         completedReads++;
 
-        // Once all files are read, update state
+        // Once all files are read, update state atomically and notify parent
         if (completedReads === validFiles.length) {
-          setSelectedFiles((prev) => [...prev, ...validFiles]);
-          setPreviews((prev) => [...prev, ...newPreviews]);
-          onImagesChange([...(selectedFiles || []), ...validFiles]);
+          setSelectedFiles((prev) => {
+            const updated = [...prev, ...validFiles];
+            // Also update previews and notify parent from within the functional update
+            setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+            onImagesChange(updated);
+            return updated;
+          });
         }
       };
 
       reader.onerror = () => {
         console.error(`Failed to read file: ${file.name}`);
         completedReads++;
-        
+
         if (completedReads === validFiles.length) {
-          setSelectedFiles((prev) => [...prev, ...validFiles]);
-          setPreviews((prev) => [...prev, ...newPreviews.filter(Boolean)]);
-          onImagesChange([...(selectedFiles || []), ...validFiles]);
+          setSelectedFiles((prev) => {
+            const updated = [...prev, ...validFiles];
+            setPreviews((prevPreviews) => [...prevPreviews, ...newPreviews.filter(Boolean)]);
+            onImagesChange(updated);
+            return updated;
+          });
         }
       };
 

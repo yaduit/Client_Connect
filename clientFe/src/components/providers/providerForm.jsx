@@ -64,14 +64,16 @@ const ProviderForm = () => {
           }
 
           setLocationStatus("Location detected successfully! ✅");
-        } catch (err) {
+        } catch (error) {
+          console.error(error);
           setError("Failed to get location details");
           setLocationStatus("");
         } finally {
           setLocationLoading(false);
         }
       },
-      (err) => {
+      (error) => {
+        console.error(error);
         setError("Failed to get location. Please enable location access.");
         setLocationStatus("");
         setLocationLoading(false);

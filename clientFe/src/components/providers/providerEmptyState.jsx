@@ -61,7 +61,7 @@ const ProviderEmptyState = () => {
         <div className="space-y-4">
           <Link
             to="/provider/onboarding"
-            className="block w-full py-4 px-6 bg-linear-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl active:scale-95 flex items-center justify-center gap-2 group"
+            className="w-full py-4 px-6 bg-linear-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-200 font-semibold text-lg shadow-lg hover:shadow-xl active:scale-95 flex items-center justify-center gap-2 group"
           >
             Publish Your First Service
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
