@@ -666,6 +666,11 @@ export const uploadServiceImages = async (req, res) => {
 
     // ============ UPLOAD TO CLOUDINARY ============
 
+    if (!process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET || !process.env.CLOUDINARY_CLOUD_NAME) {
+      console.error('Cloudinary credentials missing. Aborting image upload.');
+      return res.status(500).json({ success: false, message: 'Cloudinary not configured. Please set CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET and CLOUDINARY_CLOUD_NAME.' });
+    }
+
     const uploadedImages = [];
     const failedUploads = [];
 
@@ -683,10 +688,7 @@ export const uploadServiceImages = async (req, res) => {
           fetch_format: 'auto'
         });
 
-        uploadedImages.push({
-          url: result.secure_url,
-          publicId: result.public_id
-        });
+        uploadedImages.push({ url: result.secure_url, publicId: result.public_id });
 
       } catch (uploadError) {
         console.error(`Failed to upload file ${file.originalname}:`, uploadError);
