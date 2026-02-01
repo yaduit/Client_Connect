@@ -1,45 +1,34 @@
-import { ArrowLeft, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 
 const CategoryHeader = ({ category }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 font-medium mb-6 transition-colors group"
-        >
-          <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-          Back
-        </button>
+    <div className="bg-white border-b border-gray-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-between gap-6">
+          {/* Back Button */}
+          <button
+            onClick={() => navigate(-1)}
+            className="flex-shrink-0 flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors text-gray-600 hover:text-gray-900"
+            title="Go Back"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
 
-        {/* Header Content */}
-        <div className="flex items-start gap-4">
-          {/* Icon Badge */}
-          <div className="w-16 h-16 bg-linear-to-br from-green-500 to-blue-500 rounded-2xl flex items-center justify-center shrink-0 shadow-lg">
-            <Sparkles className="w-8 h-8 text-white" />
-          </div>
-
-          {/* Text Content */}
-          <div className="flex-1">
-            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-3">
+          {/* Center Content */}
+          <div className="flex-1 text-center">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               {category.name}
             </h1>
-            <p className="text-lg text-gray-600">
-              Browse services and find the perfect provider for your needs
+            <p className="text-gray-600 text-sm">
+              Find the perfect service provider
             </p>
-
-            {/* Stats Badge (Optional - can be populated with real data later) */}
-            <div className="flex items-center gap-4 mt-4">
-              <div className="flex items-center gap-2 text-sm text-gray-500">
-                <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                {category.subCategories?.length || 0} subcategories available
-              </div>
-            </div>
           </div>
+
+          {/* Spacer for balance */}
+          <div className="shrink-0 w-10" />
         </div>
       </div>
     </div>
