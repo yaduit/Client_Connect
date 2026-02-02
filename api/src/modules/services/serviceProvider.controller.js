@@ -24,7 +24,8 @@ export const getProviderById = async (req, res) => {
 
     const provider = await serviceProviderModel
       .findById(id)
-      .populate('categoryId', 'name slug');
+      .populate('categoryId', 'name slug')
+      .populate('userId', 'name email phoneNum');
 
     // Check if provider exists and is active
     if (!provider || !provider.isActive) {
