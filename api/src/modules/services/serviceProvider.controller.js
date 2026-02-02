@@ -3,6 +3,7 @@ import categoryModel from "../categories/category.model.js";
 import userModel from "../users/user.model.js";
 import mongoose from 'mongoose';
 import cloudinary from '../../config/cloudinary.config.js'
+import jwt from 'jsonwebtoken' 
 
 /**
  * Get provider by ID (public endpoint)
@@ -274,6 +275,17 @@ export const registerServiceProvider = async (req, res) => {
       });
     }
 
+    // REISSUE JWT so the cookie contains the new role
+    const isProd = process.env.NODE_ENV === 'production';
+    const token = jwt.sign({ id: updatedUser._id, role: updatedUser.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: isProd ? 'none' : 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
     // ============ SUCCESS RESPONSE ============
 
     return res.status(201).json({
@@ -286,6 +298,12 @@ export const registerServiceProvider = async (req, res) => {
         subCategorySlug: provider.subCategorySlug,
         location: provider.location,
         isActive: provider.isActive
+      },
+      user: {
+        id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role
       }
     });
 
