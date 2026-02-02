@@ -40,9 +40,7 @@ const LoginForm = () => {
       console.log("✅ Login successful, user:", data.user);
 
       // ✅ Update auth state with user data only
-      login({
-        user: data.user,
-      });
+      login(data.user);
 
       // ✅ FIXED: Check user role for proper redirect
       if (data.user.role === "provider") {

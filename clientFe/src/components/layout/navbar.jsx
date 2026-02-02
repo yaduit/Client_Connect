@@ -76,12 +76,6 @@ const Navbar = () => {
           {/* Center section: Main navigation - hidden on mobile */}
           <div className="hidden lg:flex items-center space-x-8">
             <Link
-              to="/services"
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-            >
-              Services
-            </Link>
-            <Link
               to="/write-review"
               className="text-gray-700 hover:text-green-600 font-medium transition-colors"
             >
@@ -291,13 +285,6 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="lg:hidden border-t border-gray-100 bg-white">
           <div className="px-4 pt-2 pb-4 space-y-3">
-            <Link
-              to="/services"
-              onClick={closeMobileMenu}
-              className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-            >
-              Services
-            </Link>
             <Link
               to="/write-review"
               onClick={closeMobileMenu}

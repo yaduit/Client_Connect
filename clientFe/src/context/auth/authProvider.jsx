@@ -33,7 +33,7 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   // ✅ Login: Store user in localStorage (token is in httpOnly cookie)
-  const login = ({ user }) => {
+  const login = (user) => {
     if (!user) {
       console.error("Login failed: user is required");
       return;

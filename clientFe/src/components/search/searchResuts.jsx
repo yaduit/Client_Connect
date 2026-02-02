@@ -2,21 +2,13 @@ import React from 'react';
 import ProviderCard from '../providers/providerCard.jsx';
 import { Loader2, AlertCircle, SearchX } from 'lucide-react';
 
-const SearchResults = ({
-  providers,
-  loading,
-  error,
-  page,
-  setPage
-}) => {
-
-  // Loading state for initial search
+const SearchResults = ({ providers, loading, error, page, setPage }) => {
+  // Loading state
   if (loading && page === 1) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <Loader2 className="w-12 h-12 text-green-600 animate-spin mb-4" />
+      <div className="flex flex-col items-center justify-center py-24">
+        <Loader2 className="w-10 h-10 text-green-600 animate-spin mb-3" />
         <p className="text-gray-600 font-medium">Searching for providers...</p>
-        <p className="text-gray-400 text-sm mt-2">This won't take long</p>
       </div>
     );
   }
@@ -24,19 +16,11 @@ const SearchResults = ({
   // Error state
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4">
-        <div className="bg-red-50 border-2 border-red-200 rounded-xl p-8 max-w-md text-center">
-          <AlertCircle className="w-12 h-12 text-red-600 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-red-900 mb-2">
-            Search Failed
-          </h3>
-          <p className="text-red-700">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
-          >
-            Try Again
-          </button>
+      <div className="flex flex-col items-center justify-center py-24 px-4">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-sm w-full text-center">
+          <AlertCircle className="w-10 h-10 text-red-600 mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-red-900 mb-2">Search Failed</h3>
+          <p className="text-red-700 text-sm">{error}</p>
         </div>
       </div>
     );
@@ -45,78 +29,60 @@ const SearchResults = ({
   // No results state
   if (!loading && providers.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 px-4">
-        <div className="bg-gray-50 border-2 border-gray-200 rounded-xl p-8 max-w-md text-center">
-          <SearchX className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-            No Providers Found
-          </h3>
-          <p className="text-gray-600 mb-4">
-            We couldn't find any service providers matching your criteria.
+      <div className="flex flex-col items-center justify-center py-24 px-4">
+        <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 max-w-sm w-full text-center">
+          <SearchX className="w-12 h-12 text-gray-400 mx-auto mb-3" />
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">No Providers Found</h3>
+          <p className="text-gray-600 text-sm mb-4">
+            Try expanding your search radius or removing filters.
           </p>
-          <div className="space-y-2 text-sm text-gray-500 text-left">
-            <p className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
-              Try expanding your search radius
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
-              Remove category filters
-            </p>
-            <p className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-gray-400 rounded-full"></span>
-              Search in a different location
-            </p>
-          </div>
         </div>
       </div>
     );
   }
 
-  // Results found
   return (
     <div className="space-y-6">
       {/* Results Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-2xl font-bold text-gray-900">
-            Search Results
-          </h3>
-          <p className="text-gray-600 mt-1">
-            Found {providers.length} provider{providers.length !== 1 ? 's' : ''} near you
+          <h2 className="text-xl font-bold text-gray-900">
+            {providers.length} Provider{providers.length !== 1 ? 's' : ''} Found
+          </h2>
+          <p className="text-gray-600 text-sm mt-1">
+            {providers.length > 0 ? 'Sorted by ' + (new URLSearchParams(window.location.search).get('sort') === 'rating' ? 'highest rated' : 'distance') : ''}
           </p>
         </div>
       </div>
 
       {/* Results Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {providers.map((provider) => (
           <ProviderCard key={provider._id} provider={provider} />
         ))}
       </div>
 
       {/* Load More Button */}
-      <div className="flex justify-center pt-8">
-        <button
-          onClick={() => setPage(prev => prev + 1)}
-          disabled={loading}
-          className="px-8 py-3 bg-white border-2 border-gray-300 hover:border-green-600 hover:bg-green-50 text-gray-700 hover:text-green-700 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-gray-300 disabled:hover:bg-white flex items-center gap-3 shadow-sm"
-        >
-          {loading ? (
-            <>
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Loading more providers...
-            </>
-          ) : (
-            <>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-              Load More Providers
-            </>
-          )}
-        </button>
-      </div>
+      {providers.length > 0 && (
+        <div className="flex justify-center pt-6">
+          <button
+            onClick={() => setPage((prev) => prev + 1)}
+            disabled={loading}
+            className="px-6 py-2.5 border border-gray-300 hover:border-green-600 hover:bg-green-50 text-gray-700 hover:text-green-700 font-semibold rounded-lg transition-all duration-200 disabled:opacity-50 text-sm flex items-center gap-2"
+          >
+            {loading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              <>
+                Load More
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

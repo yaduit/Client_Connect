@@ -147,11 +147,13 @@ const ProviderForm = () => {
         }
       }
 
-      // Update user role locally
-      updateUser({
-        ...user,
-        role: providerResponse.data?.user?.role || "provider",
-      });
+      // Update local user data from backend response (if present)
+      if (providerResponse.user) {
+        updateUser(providerResponse.user);
+      } else {
+        // fallback — assume provider
+        updateUser({ ...user, role: "provider" });
+      }
 
       navigate("/provider/dashboard", { replace: true });
     } catch (err) {

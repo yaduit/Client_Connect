@@ -76,6 +76,6 @@ export const uploadProviderImagesApi = async (files) => {
  * await deleteProviderImageApi("marketplace/providers/userId/imagename");
  */
 export const deleteProviderImageApi = async (publicId) => {
-  const res = await api.delete(`/providers/me/images/${publicId}`);
+  const res = await api.delete(`/providers/me/images/${encodeURIComponent(publicId)}`);
   return res.data;
 };

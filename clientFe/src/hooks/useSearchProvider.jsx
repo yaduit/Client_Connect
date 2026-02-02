@@ -9,6 +9,7 @@ export const useSearchProviders = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState(null);
 
   const hasValidFilters = (filters) => {
     return (
@@ -45,18 +46,12 @@ export const useSearchProviders = () => {
 
     let lat = params.get('lat');
     let lng = params.get('lng');
-    if(!lat || !lng){
+    if (!lat || !lng) {
       const saved = JSON.parse(localStorage.getItem("lastLocation"));
-      if(saved){
+      if (saved) {
         lat = saved.lat;
         lng = saved.lng;
       }
-    }
-
-    if(!lat || !lng){
-      setError('Please provide a location to see nearby providers');
-      setProviders([]);
-      return;
     }
 
     const filters = {
@@ -68,11 +63,25 @@ export const useSearchProviders = () => {
       sort: params.get("sort")
     };
 
-    if (!hasValidFilters(filters)) return;
+    if (!hasValidFilters(filters)) {
+      setError('Please provide a location or select a category/subcategory');
+      setProviders([]);
+      return;
+    }
 
+    // Save filters for pagination use
+    setFilters(filters);
     setPage(1);
     search(filters, 1, true);
+
   }, [location.search]);
+
+  // Fetch additional pages when `page` changes
+  useEffect(() => {
+    if (page === 1) return;
+    if (!filters) return;
+    search(filters, page, false);
+  }, [page]);
 
   return {
     providers,
@@ -82,4 +91,5 @@ export const useSearchProviders = () => {
     setPage,
     search
   };
-};
+
+}
