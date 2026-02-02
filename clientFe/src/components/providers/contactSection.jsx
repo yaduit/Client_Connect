@@ -1,4 +1,4 @@
-import { X, Phone, Mail } from "lucide-react";
+import { X } from "lucide-react";
 import { useState } from "react";
 
 const ContactSection = ({ provider, onClose }) => {
@@ -37,54 +37,6 @@ const ContactSection = ({ provider, onClose }) => {
             <X className="w-5 h-5" />
           </button>
         </div>
-
-        {/* Primary contact (show only one) */}
-        {(() => {
-          const primary = provider.userId?.phoneNum
-            ? { type: 'phone', value: provider.userId.phoneNum }
-            : provider.userId?.email
-            ? { type: 'email', value: provider.userId.email }
-            : null;
-
-          if (!primary) return null;
-
-          return (
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-4">
-              <div className="flex items-center gap-3">
-                {primary.type === 'phone' ? (
-                  <Phone className="w-5 h-5 text-gray-500" />
-                ) : (
-                  <Mail className="w-5 h-5 text-gray-500" />
-                )}
-
-                <div>
-                  <div className="text-sm font-medium text-gray-900">
-                    {primary.type === 'phone' ? 'Phone' : 'Email'}
-                  </div>
-                  <div className="text-sm text-gray-600">{primary.value}</div>
-                </div>
-              </div>
-
-              <div>
-                {primary.type === 'phone' ? (
-                  <a
-                    href={`tel:${primary.value.replace(/\s+/g, '')}`}
-                    className="px-3 py-1 bg-green-600 text-white rounded-md text-sm"
-                  >
-                    Call
-                  </a>
-                ) : (
-                  <a
-                    href={`mailto:${primary.value}`}
-                    className="px-3 py-1 bg-green-600 text-white rounded-md text-sm"
-                  >
-                    Email
-                  </a>
-                )}
-              </div>
-            </div>
-          );
-        })()}
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">

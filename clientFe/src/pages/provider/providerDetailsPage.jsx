@@ -1,4 +1,4 @@
-import{ useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProviderByIdApi } from "../../api/provider.api.js";
 import ProviderDetailsSkeleton from "../../components/providers/providerDetailsSkeleton.jsx";
@@ -6,7 +6,7 @@ import ProviderHeader from "../../components/providers/providerHeader.jsx";
 import ProviderHero from "../../components/providers/providerHero.jsx";
 import ReviewSection from "../../components/providers/reviewSection.jsx";
 import ServicePackages from "../../components/providers/servicePackage.jsx";
-import ContactSection from "../../components/providers/contactSection.jsx";
+import ContactModal from "../../components/providers/contactSection.jsx";
 import { AlertCircle } from "lucide-react";
 
 const ProviderDetails = () => {
@@ -45,9 +45,9 @@ const ProviderDetails = () => {
     return (
       <div className="min-h-screen bg-white">
         <ProviderHeader />
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <div className="flex flex-col items-center justify-center">
-            <AlertCircle className="w-12 h-12 text-gray-400 mb-4" />
+        <div className="min-h-[calc(100vh-60px)] flex items-center justify-center px-4">
+          <div className="text-center max-w-sm">
+            <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h2 className="text-lg font-semibold text-gray-900 mb-2">
               Provider Not Found
             </h2>
@@ -68,12 +68,9 @@ const ProviderDetails = () => {
     <div className="min-h-screen bg-white">
       <ProviderHeader onNavigate={() => navigate(-1)} />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
-        <ProviderHero
-          provider={provider}
-          onContactClick={() => setShowContact(true)}
-        />
+        <ProviderHero provider={provider} />
 
         {/* About Section */}
         {provider.description && (
@@ -95,17 +92,17 @@ const ProviderDetails = () => {
           <ReviewSection reviews={provider.reviews} />
         )}
 
-        {/* CTA Section */}
+        {/* CTA Section - SINGLE BUTTON */}
         <section className="py-12 text-center border-t border-gray-100">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">
-            Ready to book?
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            Ready to get started?
           </h2>
-          <p className="text-gray-600 mb-6">
-            Get started with {provider.businessName} today
+          <p className="text-gray-600 text-sm mb-6">
+            Contact {provider.businessName} today
           </p>
           <button
             onClick={() => setShowContact(true)}
-            className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+            className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors inline-block"
           >
             Contact & Book
           </button>
@@ -114,7 +111,7 @@ const ProviderDetails = () => {
 
       {/* Contact Modal */}
       {showContact && (
-        <ContactSection
+        <ContactModal
           provider={provider}
           onClose={() => setShowContact(false)}
         />
