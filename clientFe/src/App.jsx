@@ -9,8 +9,13 @@ import SignupPage from "./pages/auth/signupPage.jsx";
 
 import ProviderOnboarding from "./pages/provider/providerOnboarding.jsx";
 import ProviderDashBoard from "./pages/provider/providerDashBoard.jsx";
-
 import ProtectedRoute from "./routes/protectedRoutes.jsx";
+
+import AdminDashboard from "./pages/admin/adminDashboard.jsx";
+import AdminUsers from "./pages/admin/adminUsers.jsx";
+import AdminProviders from "./pages/admin/adminProviders.jsx";
+import AdminBookings from "./pages/admin/adminBookings.jsx";
+import AdminCategories from "./pages/admin/adminCategories.jsx";
 
 function App() {
   return (
@@ -42,6 +47,52 @@ function App() {
           </ProtectedRoute>
         }
       />
+
+      {/* ADMIN ROUTES */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminUsers />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/providers"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminProviders />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/bookings"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminBookings />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/admin/categories"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AdminCategories />
+            </ProtectedRoute>
+          }
+        />
     </Routes>
     </>
   );

@@ -19,3 +19,15 @@ export const getCategoryBySlugApi = async (slug) => {
     const res = await api.get(`/categories/${slug}`);
     return res.data;
 };
+
+// Add to existing categories.api.js
+
+export const createCategory = async (payload) => {
+  const { data } = await api.post('/categories', payload);
+  return data;
+};
+
+export const addSubCategory = async (categoryId, payload) => {
+  const { data } = await api.post(`/categories/${categoryId}/subcategories`, payload);
+  return data;
+};
