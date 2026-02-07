@@ -154,8 +154,7 @@ export const getMyBookings = async (req, res) => {
     }
 
     // Find provider by userId
-    const provider = await require('../services/serviceProvider.model.js').default.findOne({ userId });
-
+    const provider = await serviceModel.findOne({ userId });
     if (!provider) {
       return res.status(404).json({
         success: false,
@@ -395,8 +394,7 @@ export const getBookingsByStatus = async (req, res) => {
     }
 
     // Find provider
-    const provider = await require('../services/serviceProvider.model.js').default.findOne({ userId });
-
+   const provider = await serviceModel.findOne({ userId });
     if (!provider) {
       return res.status(404).json({
         success: false,
