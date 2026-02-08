@@ -22,9 +22,31 @@ export const useCategoryDetails = (slug) => {
       setLoading(true);
       setError(null);
       const data = await getCategoryBySlugApi(slug);
-      setCategory(data);
+      
+      // ✅ IMPROVED: Handle different response formats
+      if (data && typeof data === 'object') {
+        setCategory(data);
+      } else {
+        throw new Error('Invalid category data received');
+      }
     } catch (err) {
-      setError(err.message || "Failed to load category");
+      console.error('Category fetch error:', err);
+      
+      // ✅ IMPROVED: Better error message extraction
+      let errorMessage = 'Failed to load category';
+      
+      if (err.response) {
+        // API returned an error response
+        if (err.response.status === 404) {
+          errorMessage = 'Category not found';
+        } else if (err.response.data?.message) {
+          errorMessage = err.response.data.message;
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
       setCategory(null);
     } finally {
       setLoading(false);
