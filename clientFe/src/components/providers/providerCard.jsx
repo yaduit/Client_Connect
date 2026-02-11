@@ -9,7 +9,7 @@ const ProviderCard = ({ provider, loading = false }) => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group max-w-sm w-full">
       {/* Image */}
-      <div className="h-32 sm:h-36 bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center relative overflow-hidden">
+      <div className="h-32 sm:h-36 bg-linear-to-br from-gray-100 to-gray-50 flex items-center justify-center relative overflow-hidden">
         <span className="text-gray-400 text-xs sm:text-sm font-medium uppercase tracking-wide">
           Service Image
         </span>
