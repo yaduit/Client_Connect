@@ -8,7 +8,6 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { user, loading, isAuthenticated, logout } = useAuth();
 
-  // ✅ DEBUG: Log auth state changes
   useEffect(() => {
     console.log("🔍 Navbar Auth State Updated:", {
       isAuthenticated,
@@ -19,42 +18,31 @@ const Navbar = () => {
   }, [isAuthenticated, user, loading]);
 
   const handleBecomeProvider = () => {
-    if (loading) {
-      return;
-    }
-
+    if (loading) return;
     if (!isAuthenticated) {
       navigate("/login?redirect=/provider/onboarding");
       return;
     }
-
     if (user.role === "provider") {
       navigate("/provider/dashboard");
       return;
     }
-
     navigate("/provider/onboarding");
   };
 
   const handleLogout = async () => {
     try {
-      // ✅ Call backend to clear httpOnly cookie
       await LogoutApi();
-      // Clear local user data
       logout();
       navigate("/");
     } catch (err) {
       console.error("❌ Logout failed:", err);
-      // Still clear local data even if API call fails
       logout();
       navigate("/");
     }
   };
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
-
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
   const handleNavigation = (callback) => {
     closeMobileMenu();
     callback();
@@ -64,27 +52,26 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Left section: Logo */}
+          {/* Logo - Updated with elegant styling */}
           <div className="shrink-0">
             <Link to="/" className="flex items-center">
-              <span className="text-xl font-bold text-green-600">
-                Client Connect
+              <span className="text-xl font-bold text-green-600 tracking-tight">
+                CLIENT CONNECT
               </span>
             </Link>
           </div>
 
-          {/* Center section: Main navigation - hidden on mobile */}
+          {/* Center navigation */}
           <div className="hidden lg:flex items-center space-x-8">
             <Link
               to="/write-review"
-              className="text-gray-700 hover:text-green-600 font-medium transition-colors"
+              className="text-gray-700 hover:text-green-600 font-medium transition-colors text-sm"
             >
               Write a Review
             </Link>
 
-            {/* Location selector placeholder */}
             <button
-              className="flex items-center text-gray-700 hover:text-green-600 transition-colors"
+              className="flex items-center text-gray-700 hover:text-green-600 transition-colors text-sm"
               aria-label="Select location"
               onClick={() => console.log("Location selector clicked")}
             >
@@ -92,29 +79,18 @@ const Navbar = () => {
               <span className="font-medium">Select location</span>
             </button>
 
-            {/* Theme toggle placeholder */}
             <button
               className="p-2 text-gray-700 hover:text-green-600 transition-colors"
               aria-label="Toggle theme"
               onClick={() => console.log("Theme toggle clicked")}
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
             </button>
           </div>
 
-          {/* Right section: Auth links and CTA */}
+          {/* Right section */}
           <div className="hidden lg:flex items-center space-x-4">
             {loading ? (
               <div className="text-gray-500 text-sm">Loading...</div>
@@ -122,63 +98,49 @@ const Navbar = () => {
               <>
                 {!isAuthenticated && (
                   <>
-                    <Link
-                      to="/login"
-                      className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-                    >
+                    <Link to="/login" className="text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
                       Login
                     </Link>
-                    <Link
-                      to="/signup"
-                      className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-                    >
+                    <Link to="/signup" className="text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
                       Signup
                     </Link>
+                    {/* ✅ Premium LV-style button */}
                     <button
                       onClick={handleBecomeProvider}
-                      className="px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+                      className="px-6 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow text-sm uppercase tracking-wide"
                     >
                       Become a Provider
                     </button>
                   </>
                 )}
 
-                {/* ✅ FIXED: Seeker role - Show "Become a Provider" button */}
                 {isAuthenticated && user?.role === "seeker" && (
                   <>
-                    <span className="text-gray-700 font-medium">
-                      Hi, {user.name}
-                    </span>
+                    <span className="text-gray-700 font-medium text-sm">Hi, {user.name}</span>
                     <button
                       onClick={handleBecomeProvider}
-                      className="px-5 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+                      className="px-6 py-2.5 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow text-sm uppercase tracking-wide"
                     >
                       Become a Provider
                     </button>
                     <button
                       onClick={handleLogout}
-                      className="px-5 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors shadow-sm"
+                      className="px-5 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm text-sm"
                     >
                       Logout
                     </button>
                   </>
                 )}
 
-                {/* ✅ FIXED: Provider role - Show "Dashboard" link, NOT "Become a Provider" */}
                 {isAuthenticated && user?.role === "provider" && (
                   <>
-                    <span className="text-gray-700 font-medium">
-                      Hi, {user.name}
-                    </span>
-                    <Link
-                      to="/provider/dashboard"
-                      className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-                    >
+                    <span className="text-gray-700 font-medium text-sm">Hi, {user.name}</span>
+                    <Link to="/provider/dashboard" className="text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
                       Dashboard
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="px-5 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors shadow-sm"
+                      className="px-5 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm text-sm"
                     >
                       Logout
                     </button>
@@ -187,18 +149,13 @@ const Navbar = () => {
 
                 {isAuthenticated && user?.role === "admin" && (
                   <>
-                    <span className="text-gray-700 font-medium">
-                      Hi, {user.name}
-                    </span>
-                    <Link
-                      to="/admin/dashboard"
-                      className="text-gray-700 hover:text-green-600 font-medium transition-colors"
-                    >
-                      Admin
+                    <span className="text-gray-700 font-medium text-sm">Hi, {user.name}</span>
+                    <Link to="/admin/dashboard" className="text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
+                      Admin Panel
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="px-5 py-2.5 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition-colors shadow-sm"
+                      className="px-5 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors shadow-sm text-sm"
                     >
                       Logout
                     </button>
@@ -210,32 +167,26 @@ const Navbar = () => {
 
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-3">
-            {/* CTA always visible on mobile */}
             {!isAuthenticated && (
               <button
                 onClick={() => handleNavigation(handleBecomeProvider)}
                 disabled={loading}
-                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-xs uppercase tracking-wide disabled:opacity-50"
               >
                 Provider
               </button>
             )}
 
-            {/* ✅ FIXED: Provider mobile - Don't show "Become Provider" */}
             {isAuthenticated && user?.role === "provider" && (
-              <Link
-                to="/provider/dashboard"
-                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm"
-              >
+              <Link to="/provider/dashboard" className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-xs uppercase tracking-wide">
                 Dashboard
               </Link>
             )}
 
-            {/* ✅ FIXED: Seeker mobile - Show "Become Provider" */}
             {isAuthenticated && user?.role === "seeker" && (
               <button
                 onClick={() => handleNavigation(handleBecomeProvider)}
-                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-sm"
+                className="px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors text-xs uppercase tracking-wide"
               >
                 Provider
               </button>
@@ -248,32 +199,12 @@ const Navbar = () => {
               aria-expanded={isMobileMenuOpen}
             >
               {isMobileMenuOpen ? (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               ) : (
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               )}
             </button>
@@ -281,44 +212,22 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile menu dropdown */}
+      {/* Mobile menu */}
       {isMobileMenuOpen && (
         <div className="lg:hidden border-t border-gray-100 bg-white">
           <div className="px-4 pt-2 pb-4 space-y-3">
-            <Link
-              to="/write-review"
-              onClick={closeMobileMenu}
-              className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-            >
+            <Link to="/write-review" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
               Write a Review
             </Link>
 
-            <button
-              className="flex items-center py-2 text-gray-700 hover:text-green-600 transition-colors w-full"
-              aria-label="Select location"
-              onClick={() => console.log("Location selector clicked")}
-            >
+            <button className="flex items-center py-2 text-gray-700 hover:text-green-600 transition-colors w-full text-sm" onClick={() => console.log("Location clicked")}>
               <span className="mr-1">📍</span>
               <span className="font-medium">Select location</span>
             </button>
 
-            <button
-              className="flex items-center py-2 text-gray-700 hover:text-green-600 transition-colors"
-              aria-label="Toggle theme"
-              onClick={() => console.log("Theme toggle clicked")}
-            >
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                />
+            <button className="flex items-center py-2 text-gray-700 hover:text-green-600 transition-colors text-sm" onClick={() => console.log("Theme clicked")}>
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
               </svg>
               <span className="font-medium">Dark mode</span>
             </button>
@@ -330,65 +239,39 @@ const Navbar = () => {
                 <>
                   {!isAuthenticated && (
                     <>
-                      <Link
-                        to="/login"
-                        onClick={closeMobileMenu}
-                        className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-                      >
+                      <Link to="/login" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
                         Login
                       </Link>
-                      <Link
-                        to="/signup"
-                        onClick={closeMobileMenu}
-                        className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-                      >
+                      <Link to="/signup" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
                         Signup
                       </Link>
                     </>
                   )}
 
                   {isAuthenticated && (
-                    <div className="py-2 text-gray-700 font-medium">
-                      Hi, {user?.name}
-                    </div>
+                    <div className="py-2 text-gray-700 font-medium text-sm">Hi, {user?.name}</div>
                   )}
 
-                  {/* ✅ FIXED: Seeker mobile menu - Show "Become Provider" */}
                   {isAuthenticated && user?.role === "seeker" && (
-                    <button
-                      onClick={() => handleNavigation(handleBecomeProvider)}
-                      className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors w-full text-left"
-                    >
+                    <button onClick={() => handleNavigation(handleBecomeProvider)} className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors w-full text-left text-sm">
                       Become a Provider
                     </button>
                   )}
 
-                  {/* ✅ FIXED: Provider mobile menu - Show "Dashboard" */}
                   {isAuthenticated && user?.role === "provider" && (
-                    <Link
-                      to="/provider/dashboard"
-                      onClick={closeMobileMenu}
-                      className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-                    >
+                    <Link to="/provider/dashboard" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
                       Dashboard
                     </Link>
                   )}
 
                   {isAuthenticated && user?.role === "admin" && (
-                    <Link
-                      to="/admin/dashboard"
-                      onClick={closeMobileMenu}
-                      className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors"
-                    >
-                      Admin
+                    <Link to="/admin/dashboard" onClick={closeMobileMenu} className="block py-2 text-gray-700 hover:text-green-600 font-medium transition-colors text-sm">
+                      Admin Panel
                     </Link>
                   )}
 
                   {isAuthenticated && (
-                    <button
-                      onClick={() => handleNavigation(handleLogout)}
-                      className="w-full text-left px-0 py-2 text-red-600 hover:text-red-700 font-medium transition-colors"
-                    >
+                    <button onClick={() => handleNavigation(handleLogout)} className="w-full text-left px-0 py-2 text-red-600 hover:text-red-700 font-medium transition-colors text-sm">
                       Logout
                     </button>
                   )}

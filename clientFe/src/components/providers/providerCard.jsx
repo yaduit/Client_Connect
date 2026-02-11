@@ -9,8 +9,8 @@ const ProviderCard = ({ provider, loading = false }) => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group max-w-sm w-full">
       {/* Image */}
-      <div className="h-32 sm:h-36 bg-linear-to-br from-gray-100 to-gray-50 flex items-center justify-center relative overflow-hidden">
-        <span className="text-gray-400 text-xs sm:text-sm font-medium">
+      <div className="h-32 sm:h-36 bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center relative overflow-hidden">
+        <span className="text-gray-400 text-xs sm:text-sm font-medium uppercase tracking-wide">
           Service Image
         </span>
         <div className="absolute inset-0 bg-green-600/0 group-hover:bg-green-600/5 transition-colors duration-300"></div>
@@ -18,12 +18,13 @@ const ProviderCard = ({ provider, loading = false }) => {
 
       {/* Content */}
       <div className="p-3 sm:p-4 space-y-2">
-        <h3 className="font-semibold text-base sm:text-lg text-gray-900 line-clamp-1 group-hover:text-green-700 transition-colors">
+        {/* Title - Updated with elegant class */}
+        <h3 className="text-elegant text-base sm:text-lg text-gray-900 line-clamp-1 group-hover:text-green-700 transition-colors">
           {provider.businessName}
         </h3>
 
         <p className="text-xs sm:text-sm text-gray-600 leading-relaxed line-clamp-1">
-          <span className="font-medium text-gray-700">
+          <span className="font-semibold text-gray-700">
             {provider.categoryId?.name}
           </span>
           <span className="text-gray-400 mx-1">•</span>
@@ -41,7 +42,7 @@ const ProviderCard = ({ provider, loading = false }) => {
         <div className="flex items-center gap-2 text-xs sm:text-sm pt-0.5">
           <div className="flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">
             <span className="text-amber-500 text-sm leading-none">⭐</span>
-            <span className="font-semibold text-gray-900">
+            <span className="font-bold text-gray-900">
               {provider.ratingAverage}
             </span>
           </div>
@@ -61,11 +62,11 @@ const ProviderCard = ({ provider, loading = false }) => {
           </span>
         </div>
 
-        {/* Actions */}
+        {/* Actions - Updated with premium button */}
         <div className="flex gap-2 pt-3 border-t border-gray-100">
           <Link
             to={`/providers/${provider._id}`}
-            className="flex-1 text-center bg-green-600 text-white py-2 px-3 rounded-lg hover:bg-green-700 active:bg-green-800 transition-all duration-200 font-medium text-xs sm:text-sm shadow-sm hover:shadow"
+            className="flex-1 text-center bg-green-600 text-white py-2 px-3 rounded-lg hover:bg-green-700 active:bg-green-800 transition-all duration-200 font-semibold text-xs sm:text-sm shadow-sm hover:shadow uppercase tracking-wide"
           >
             View Details
           </Link>

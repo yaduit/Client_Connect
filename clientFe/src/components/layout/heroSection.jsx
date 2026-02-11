@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 const HeroSection = () => {
   const [service, setService] = useState("");
   const [location, setLocation] = useState("");
@@ -88,7 +89,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative bg-linear-to-br from-gray-50 via-white to-green-50 py-16 sm:py-24 lg:py-32">
+    <section className="relative bg-gradient-to-br from-gray-50 via-white to-green-50 py-16 sm:py-24 lg:py-32">
       {/* Subtle background pattern */}
       <div
         className="absolute inset-0 opacity-5"
@@ -99,10 +100,10 @@ const HeroSection = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          {/* Heading */}
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-gray-900 tracking-tight mb-6">
-            Find Trusted Local Services{" "}
-            <span className="text-green-600">Near You</span>
+          {/* ✅ LV-style Heading */}
+          <h1 className="heading-display text-5xl sm:text-6xl lg:text-7xl text-gray-900 mb-6">
+            FIND TRUSTED LOCAL SERVICES{" "}
+            <span className="text-green-600">NEAR YOU</span>
           </h1>
 
           {/* Subheading */}
@@ -125,7 +126,7 @@ const HeroSection = () => {
                 value={service}
                 onChange={(e) => setService(e.target.value)}
                 placeholder="Plumbers, electricians, cleaners..."
-                className="flex-1 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="flex-1 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
                 aria-label="Service search"
                 required
               />
@@ -141,24 +142,24 @@ const HeroSection = () => {
                       ? "Detecting location..."
                       : "City or zip code"
                   }
-                  className="w-full py-3 focus:outline-none"
+                  className="w-full py-3 focus:outline-none text-sm"
                   aria-label="Location"
                   required
                 />
                 <button
                   type="button"
                   onClick={handleUseLocation}
-                  className="ml-2 p-2 hover:bg-gray-100 rounded"
+                  className="ml-2 p-2 hover:bg-gray-100 rounded transition-colors"
                   aria-label="Use my location"
                 >
                   📍
                 </button>
               </div>
 
-              {/* Submit */}
+              {/* ✅ Premium Submit Button */}
               <button
                 type="submit"
-                className="bg-green-600 text-white px-8 py-3 rounded-md font-semibold hover:bg-green-700 transition"
+                className="bg-green-600 text-white px-8 py-3 rounded-md font-semibold hover:bg-green-700 transition-all duration-200 shadow-sm hover:shadow uppercase tracking-wide text-sm"
               >
                 Search
               </button>
@@ -166,12 +167,12 @@ const HeroSection = () => {
           </form>
 
           {/* Trust indicators */}
-          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600">
-            <span className="font-medium">✔ 10,000+ Verified Providers</span>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600 font-medium">
+            <span>✔ 10,000+ Verified Providers</span>
             <span className="hidden sm:block">•</span>
-            <span className="font-medium">⭐ Trusted Reviews</span>
+            <span>⭐ Trusted Reviews</span>
             <span className="hidden sm:block">•</span>
-            <span className="font-medium">🔒 Secure Platform</span>
+            <span>🔒 Secure Platform</span>
           </div>
         </div>
       </div>

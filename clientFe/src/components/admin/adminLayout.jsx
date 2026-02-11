@@ -15,14 +15,13 @@ const AdminLayout = ({ children, title }) => {
       navigate('/login');
     } catch (error) {
       console.error('Logout failed:', error);
-      // Force logout on frontend even if API fails
       logout();
       navigate('/login');
     }
   };
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen bg-gray-50 admin-layout">
       <AdminSidebar onLogout={handleLogout} />
       
       <div className="flex-1 ml-64 flex flex-col">

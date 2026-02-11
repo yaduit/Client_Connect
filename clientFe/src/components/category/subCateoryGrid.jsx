@@ -53,17 +53,17 @@ const SubCategoryGrid = ({ subCategories, onSelect }) => {
                   </svg>
                 </div>
 
-                {/* Title */}
-                <h3 className="font-semibold text-gray-900 text-base mb-2 group-hover:text-green-600 transition-colors duration-200">
+                {/* Title - Updated with elegant class */}
+                <h3 className="text-elegant text-base text-gray-900 mb-2 group-hover:text-green-600 transition-colors duration-200">
                   {sub.name}
                 </h3>
 
-                {/* Description placeholder */}
+                {/* Description */}
                 <p className="text-gray-500 text-xs mb-4 line-clamp-2">
                   Browse available service providers
                 </p>
 
-                {/* Footer - Always at bottom */}
+                {/* Footer */}
                 <div className="flex items-center justify-between pt-4 border-t border-gray-100 group-hover:border-green-100 transition-colors">
                   <span className="text-xs font-medium text-gray-600 group-hover:text-green-600 transition-colors">
                     View Providers
