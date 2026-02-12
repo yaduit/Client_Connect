@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Users, Briefcase, Calendar, FolderTree, Clock, CheckCircle } from 'lucide-react';
-import AdminLayout from '../../components/admin/adminLayout.jsx';
-import StatsCard from '../../components/admin/statsCard.jsx';
+import AdminLayout from '../../components/admin/AdminLayout.jsx';
+import StatsCard from '../../components/admin/StatsCard.jsx';
 import { getDashboardStatsApi } from '../../api/admin.api.js';
 
 const AdminDashboard = () => {
   const [stats, setStats] = useState(null);
-  const [recentUsers, setRecentUsers] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,8 +16,7 @@ const AdminDashboard = () => {
     try {
       setLoading(true);
       const data = await getDashboardStatsApi();
-      setStats(data.stats);
-      setRecentUsers(data.recentUsers);
+      setStats(data);
     } catch (error) {
       console.error('Failed to fetch stats:', error);
     } finally {
@@ -29,11 +27,8 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <AdminLayout title="Dashboard">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="w-12 h-12 border-4 border-slate-200 border-t-slate-700 rounded-full animate-spin mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading dashboard...</p>
-          </div>
+        <div className="flex items-center justify-center py-12">
+          <div className="w-8 h-8 border-4 border-gray-200 border-t-green-700 rounded-full animate-spin"></div>
         </div>
       </AdminLayout>
     );
@@ -45,108 +40,92 @@ const AdminDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <StatsCard
           title="Total Users"
-          value={stats?.totalUsers || 0}
+          value={stats.totalUsers}
           icon={Users}
-          color="slate"
+          color="green"
         />
         <StatsCard
           title="Total Providers"
-          value={stats?.totalProviders || 0}
+          value={stats.totalProviders}
           icon={Briefcase}
-          color="sky"
-        />
-        <StatsCard
-          title="Total Bookings"
-          value={stats?.totalBookings || 0}
-          icon={Calendar}
           color="emerald"
         />
         <StatsCard
+          title="Total Bookings"
+          value={stats.totalBookings}
+          icon={Calendar}
+          color="sky"
+        />
+        <StatsCard
           title="Categories"
-          value={stats?.totalCategories || 0}
+          value={stats.totalCategories}
           icon={FolderTree}
           color="purple"
         />
       </div>
 
-      {/* Secondary Stats */}
+      {/* Additional Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatsCard
           title="Pending Bookings"
-          value={stats?.pendingBookings || 0}
+          value={stats.pendingBookings}
           icon={Clock}
           color="amber"
         />
         <StatsCard
           title="Active Providers"
-          value={stats?.activeProviders || 0}
+          value={stats.activeProviders}
           icon={CheckCircle}
-          color="emerald"
+          color="green"
         />
         <StatsCard
           title="Inactive Providers"
-          value={stats?.inactiveProviders || 0}
-          icon={Briefcase}
+          value={stats.inactiveProviders}
+          icon={Users}
           color="slate"
         />
       </div>
 
-      {/* Recent Users */}
+      {/* Recent Users Section */}
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-slate-800">Recent Users</h3>
+          <h3 className="text-lg font-medium text-slate-800">Recent Users</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+            <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wide">
                   Name
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wide">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wide">
                   Role
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-800 uppercase tracking-wide">
                   Joined
                 </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {recentUsers.length === 0 ? (
-                <tr>
-                  <td colSpan="4" className="px-6 py-8 text-center text-gray-500">
-                    No recent users
+              {stats.recentUsers?.map((user) => (
+                <tr key={user._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm font-medium text-slate-800">
+                    {user.name}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600">
+                    {user.email}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-600 capitalize">
+                    {user.role}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-slate-500">
+                    {new Date(user.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
-              ) : (
-                recentUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 text-sm font-medium text-slate-800">
-                      {user.name}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {user.email}
-                    </td>
-                    <td className="px-6 py-4 text-sm">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium ${
-                        user.role === 'admin'
-                          ? 'bg-purple-100 text-purple-700'
-                          : user.role === 'provider'
-                          ? 'bg-sky-100 text-sky-700'
-                          : 'bg-gray-100 text-gray-700'
-                      }`}>
-                        {user.role}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600">
-                      {new Date(user.createdAt).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))
-              )}
+              ))}
             </tbody>
           </table>
         </div>
