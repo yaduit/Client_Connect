@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Search, Edit2, Trash2 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout.jsx';
-import StatusBadge from '../../components/admin/statusBadge.jsx';
-import ConfirmDialog from '../../components/admin/confirmDialog.jsx';
+import StatusBadge from '../../components/admin/StatusBadge.jsx';
+import ConfirmDialog from '../../components/admin/ConfirmDialog.jsx';
 import { getAllUsersApi, updateUserRoleApi, deleteUserApi } from '../../api/admin.api.js';
 
 const AdminUsers = () => {
@@ -14,11 +14,7 @@ const AdminUsers = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, user: null });
 
-  useEffect(() => {
-    fetchUsers();
-  }, [pagination.page, roleFilter]);
-
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getAllUsersApi({
@@ -38,7 +34,11 @@ const AdminUsers = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, roleFilter, searchTerm]);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleSearch = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));

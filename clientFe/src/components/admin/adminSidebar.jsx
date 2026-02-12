@@ -64,7 +64,7 @@ const AdminSidebar = ({ onLogout, isOpen, onClose }) => {
                   }
                 `}
               >
-                <Icon className="w-5 h-5 flex-shrink-0" />
+                <Icon className="w-5 h-5 shrink-0" />
                 <span>{item.label}</span>
               </Link>
             );
@@ -80,7 +80,7 @@ const AdminSidebar = ({ onLogout, isOpen, onClose }) => {
             }}
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm font-medium text-green-50 hover:bg-emerald-600 hover:text-white transition-colors"
           >
-            <LogOut className="w-5 h-5 flex-shrink-0" />
+            <LogOut className="w-5 h-5 shrink-0" />
             <span>Logout</span>
           </button>
         </div>

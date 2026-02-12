@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Search, CheckCircle, XCircle, Trash2 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout.jsx';
-import StatusBadge from '../../components/admin/statusBadge.jsx';
-import ConfirmDialog from '../../components/admin/confirmDialog.jsx';
+import StatusBadge from '../../components/admin/StatusBadge.jsx';
+import ConfirmDialog from '../../components/admin/ConfirmDialog.jsx';
 import { getAllProvidersApi, updateProviderStatusApi, deleteProviderApi } from '../../api/admin.api.js';
 
 const AdminProviders = () => {
@@ -13,11 +13,7 @@ const AdminProviders = () => {
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, provider: null });
 
-  useEffect(() => {
-    fetchProviders();
-  }, [pagination.page, statusFilter]);
-
-  const fetchProviders = async () => {
+  const fetchProviders = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getAllProvidersApi({
@@ -37,7 +33,11 @@ const AdminProviders = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, statusFilter, searchTerm]);
+
+  useEffect(() => {
+    fetchProviders();
+  }, [fetchProviders]);
 
   const handleSearch = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));

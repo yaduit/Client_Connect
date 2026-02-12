@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout.jsx';
 import StatusBadge from '../../components/admin/StatusBadge.jsx';
@@ -11,11 +11,7 @@ const AdminBookings = () => {
   const [statusFilter, setStatusFilter] = useState('all');
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
 
-  useEffect(() => {
-    fetchBookings();
-  }, [pagination.page, statusFilter]);
-
-  const fetchBookings = async () => {
+  const fetchBookings = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getAllBookingsApi({
@@ -35,7 +31,11 @@ const AdminBookings = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, statusFilter, searchTerm]);
+
+  useEffect(() => {
+    fetchBookings();
+  }, [fetchBookings]);
 
   const handleSearch = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
