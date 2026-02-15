@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, CheckCircle, XCircle, Trash2 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout.jsx';
 import StatusBadge from '../../components/admin/StatusBadge.jsx';
@@ -13,7 +13,7 @@ const AdminProviders = () => {
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, provider: null });
 
-  const fetchProviders = useCallback(async () => {
+  const fetchProviders = async () => {
     try {
       setLoading(true);
       const data = await getAllProvidersApi({
@@ -25,28 +25,27 @@ const AdminProviders = () => {
       setProviders(data.providers);
       setPagination((prev) => ({
         ...prev,
-        total: data.total,
-        pages: data.pages
+        total: data.pagination.total,
+        pages: data.pagination.pages
       }));
     } catch (error) {
       console.error('Failed to fetch providers:', error);
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, statusFilter, searchTerm]);
+  };
 
   useEffect(() => {
     fetchProviders();
-  }, [fetchProviders]);
+  }, [pagination.page, pagination.limit, statusFilter, searchTerm]);
 
   const handleSearch = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
-    fetchProviders();
   };
 
-  const handleStatusToggle = async (providerId, currentStatus) => {
+  const handleStatusToggle = async (providerId, currentIsActive) => {
     try {
-      const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+      const newStatus = !currentIsActive; // Toggle boolean
       await updateProviderStatusApi(providerId, newStatus);
       fetchProviders();
     } catch (error) {
@@ -90,7 +89,6 @@ const AdminProviders = () => {
             <option value="all">All Status</option>
             <option value="active">Active</option>
             <option value="inactive">Inactive</option>
-            <option value="pending">Pending</option>
           </select>
           <button
             onClick={handleSearch}
@@ -155,7 +153,7 @@ const AdminProviders = () => {
                       {provider.location?.city}, {provider.location?.state}
                     </td>
                     <td className="px-6 py-4">
-                      <StatusBadge status={provider.status} type="provider" />
+                      <StatusBadge status={provider.isActive ? 'active' : 'inactive'} type="provider" />
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600">
                       ⭐ {provider.ratingAverage} ({provider.totalReviews})
@@ -163,15 +161,15 @@ const AdminProviders = () => {
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
                         <button
-                          onClick={() => handleStatusToggle(provider._id, provider.status)}
+                          onClick={() => handleStatusToggle(provider._id, provider.isActive)}
                           className={`p-2 rounded-md transition-colors ${
-                            provider.status === 'active'
+                            provider.isActive
                               ? 'text-slate-600 hover:bg-slate-50'
                               : 'text-green-600 hover:bg-green-50'
                           }`}
-                          title={provider.status === 'active' ? 'Deactivate' : 'Activate'}
+                          title={provider.isActive ? 'Deactivate' : 'Activate'}
                         >
-                          {provider.status === 'active' ? (
+                          {provider.isActive ? (
                             <XCircle className="w-4 h-4" />
                           ) : (
                             <CheckCircle className="w-4 h-4" />

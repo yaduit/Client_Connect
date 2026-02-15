@@ -89,7 +89,7 @@ const AdminDashboard = () => {
       {/* Recent Users Section */}
       <div className="bg-white rounded-lg border border-gray-200">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-slate-800">Recent Users</h3>
+          <h3 className="text-lg font-semibold text-slate-800">Recent Users</h3>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">

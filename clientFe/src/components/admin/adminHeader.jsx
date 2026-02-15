@@ -19,7 +19,7 @@ const AdminHeader = ({ title, onMenuClick }) => {
           </button>
 
           {/* Page Title */}
-          <h2 className="text-xl font-semibold text-slate-800 tracking-tight">
+          <h2 className="text-2xl font-semibold text-slate-800">
             {title}
           </h2>
         </div>
@@ -27,10 +27,8 @@ const AdminHeader = ({ title, onMenuClick }) => {
         {/* Right: User Info */}
         <div className="flex items-center gap-3">
           <div className="hidden sm:block text-right">
-            <p className="text-sm font-semibold text-slate-800">{user?.name}</p>
-            <p className="text-xs text-slate-500 uppercase tracking-wide">
-              Administrator
-            </p>
+            <p className="text-sm font-medium text-slate-800">{user?.name}</p>
+            <p className="text-xs text-slate-500">Administrator</p>
           </div>
           <div className="w-10 h-10 rounded-full bg-green-700 flex items-center justify-center text-white font-bold text-sm">
             {user?.name?.charAt(0).toUpperCase()}

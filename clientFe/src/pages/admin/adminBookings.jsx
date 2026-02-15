@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout.jsx';
 import StatusBadge from '../../components/admin/StatusBadge.jsx';
@@ -6,41 +6,65 @@ import { getAllBookingsApi } from '../../api/admin.api.js';
 
 const AdminBookings = () => {
   const [bookings, setBookings] = useState([]);
+  const [filteredBookings, setFilteredBookings] = useState([]); // ✅ NEW: Client-side filtering
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
 
-  const fetchBookings = useCallback(async () => {
+  useEffect(() => {
+    fetchBookings();
+  }, [pagination.page, statusFilter]);
+
+  // ✅ NEW: Client-side search filtering
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setFilteredBookings(bookings);
+      return;
+    }
+
+    const lowercaseSearch = searchTerm.toLowerCase();
+    const filtered = bookings.filter((booking) => {
+      const seekerName = booking.seekerId?.name?.toLowerCase() || '';
+      const seekerEmail = booking.seekerId?.email?.toLowerCase() || '';
+      const providerName = booking.providerId?.businessName?.toLowerCase() || '';
+      const bookingId = booking._id.toLowerCase();
+
+      return (
+        seekerName.includes(lowercaseSearch) ||
+        seekerEmail.includes(lowercaseSearch) ||
+        providerName.includes(lowercaseSearch) ||
+        bookingId.includes(lowercaseSearch)
+      );
+    });
+
+    setFilteredBookings(filtered);
+  }, [searchTerm, bookings]);
+
+  const fetchBookings = async () => {
     try {
       setLoading(true);
-      const data = await getAllBookingsApi({
+      const response = await getAllBookingsApi({
         page: pagination.page,
         limit: pagination.limit,
         status: statusFilter === 'all' ? undefined : statusFilter,
         search: searchTerm || undefined
       });
-      setBookings(data.bookings);
+      setBookings(response.data);
+      setFilteredBookings(response.data);
       setPagination((prev) => ({
         ...prev,
-        total: data.total,
-        pages: data.pages
+        total: response.pagination.total,
+        pages: response.pagination.pages
       }));
     } catch (error) {
       console.error('Failed to fetch bookings:', error);
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, statusFilter, searchTerm]);
-
-  useEffect(() => {
-    fetchBookings();
-  }, [fetchBookings]);
-
-  const handleSearch = () => {
-    setPagination((prev) => ({ ...prev, page: 1 }));
-    fetchBookings();
   };
+
+  // ✅ REMOVED: handleSearch function (no backend search needed)
 
   return (
     <AdminLayout title="Bookings Overview">
@@ -53,14 +77,22 @@ const AdminBookings = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
-              placeholder="Search bookings..."
+              placeholder="Search bookings (client-side filter)..."
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
             />
+            {/* ✅ NEW: Search info tooltip */}
+            {searchTerm && (
+              <p className="text-xs text-slate-500 mt-1">
+                Filtering {filteredBookings.length} of {bookings.length} results on this page
+              </p>
+            )}
           </div>
           <select
             value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
+            onChange={(e) => {
+              setStatusFilter(e.target.value);
+              setPagination((prev) => ({ ...prev, page: 1 })); // Reset to page 1
+            }}
             className="px-4 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-green-700"
           >
             <option value="all">All Status</option>
@@ -69,12 +101,6 @@ const AdminBookings = () => {
             <option value="completed">Completed</option>
             <option value="cancelled">Cancelled</option>
           </select>
-          <button
-            onClick={handleSearch}
-            className="px-6 py-2 bg-green-700 text-white rounded-md text-sm font-medium hover:bg-green-800 transition-colors"
-          >
-            Search
-          </button>
         </div>
       </div>
 
@@ -113,26 +139,29 @@ const AdminBookings = () => {
                     </div>
                   </td>
                 </tr>
-              ) : bookings.length === 0 ? (
+              ) : filteredBookings.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="px-6 py-12 text-center text-sm text-slate-500">
-                    No bookings found
+                    {searchTerm ? `No bookings match "${searchTerm}"` : 'No bookings found'}
                   </td>
                 </tr>
               ) : (
-                bookings.map((booking) => (
+                filteredBookings.map((booking) => (
                   <tr key={booking._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 text-sm font-medium text-slate-800">
-                      #{booking._id.slice(-6)}
+                      #{booking._id.slice(-8).toUpperCase()}
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600">
-                      {booking.seekerId?.name || 'N/A'}
+                      <div>
+                        <p className="font-medium">{booking.seekerId?.name || 'N/A'}</p>
+                        <p className="text-xs text-slate-500">{booking.seekerId?.email || ''}</p>
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600">
                       {booking.providerId?.businessName || 'N/A'}
                     </td>
                     <td className="px-6 py-4 text-sm text-slate-600">
-                      {new Date(booking.serviceDate).toLocaleDateString()}
+                      {new Date(booking.bookingDate).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4">
                       <StatusBadge status={booking.status} type="booking" />
@@ -151,7 +180,7 @@ const AdminBookings = () => {
         {pagination.pages > 1 && (
           <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
             <p className="text-sm text-slate-600">
-              Showing {bookings.length} of {pagination.total} bookings
+              Showing {filteredBookings.length} of {bookings.length} bookings on this page (Total: {pagination.total})
             </p>
             <div className="flex gap-2">
               <button

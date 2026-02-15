@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, Edit2, Trash2 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout.jsx';
 import StatusBadge from '../../components/admin/StatusBadge.jsx';
@@ -14,35 +14,34 @@ const AdminUsers = () => {
   const [editingUser, setEditingUser] = useState(null);
   const [deleteDialog, setDeleteDialog] = useState({ isOpen: false, user: null });
 
-  const fetchUsers = useCallback(async () => {
+  const fetchUsers = async () => {
     try {
       setLoading(true);
-      const data = await getAllUsersApi({
+      const response = await getAllUsersApi({
         page: pagination.page,
         limit: pagination.limit,
         role: roleFilter === 'all' ? undefined : roleFilter,
         search: searchTerm || undefined
       });
-      setUsers(data.users);
+      setUsers(response.users);
       setPagination((prev) => ({
         ...prev,
-        total: data.total,
-        pages: data.pages
+        total: response.pagination.total,
+        pages: response.pagination.pages
       }));
     } catch (error) {
       console.error('Failed to fetch users:', error);
     } finally {
       setLoading(false);
     }
-  }, [pagination.page, pagination.limit, roleFilter, searchTerm]);
+  };
 
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+  }, [pagination.page, pagination.limit, roleFilter, searchTerm]);
 
   const handleSearch = () => {
     setPagination((prev) => ({ ...prev, page: 1 }));
-    fetchUsers();
   };
 
   const handleRoleUpdate = async (userId, newRole) => {
