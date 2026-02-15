@@ -23,14 +23,16 @@ export const registerUser = async(req, res)=>{
             passwordHash
         });
         return res.status(201).json({
-            message: 'user registered sucessfully', user:{
+            success: true,
+            message: 'User registered successfully',
+            data: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
                 role: user.role
-            }})
+            }
+        });
     }catch(err){
-        console.log(err.message) //should remove//
         return res.status(500).json({message: 'internal server error'})
     }
 }
@@ -67,12 +69,13 @@ export const loginUser = async (req,res)=>{
         })
 
         return res.status(200).json({
-            message: 'Login sucessfull',
-            user:{
+            success: true,
+            message: 'Login successful',
+            data: {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                role: user.role,
+                role: user.role
             }
         });
 

@@ -8,7 +8,11 @@ router.post('/register', registerUser );
 router.post('/login', loginUser);
 router.post('/logout', authMiddleware,logoutUser);
 router.get('/me',authMiddleware,function(req,res){
-    res.status(201).json({message: 'Authenticated user', user: req.user})
-   });
+    res.status(200).json({
+        success: true,
+        message: 'Authenticated user',
+        data: req.user
+    });
+});
 
 export default router;

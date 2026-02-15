@@ -2,6 +2,7 @@ import userModel from '../users/user.model.js';
 import serviceModel from '../services/serviceProvider.model.js';
 import bookingModel from '../booking/booking.model.js';
 import categoryModel from '../categories/category.model.js';
+import mongoose from 'mongoose';
 
 // ============================================
 // DASHBOARD STATS
@@ -170,11 +171,19 @@ export const updateUserRole = async (req, res) => {
 
 /**
  * DELETE /api/admin/users/:id
- * Delete a user (soft delete by setting isVerified to false)
+ * Deactivate a user (soft delete by setting isVerified to false, preserves data)
  */
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
+
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid user ID format'
+      });
+    }
 
     const user = await userModel.findById(id);
 
@@ -193,7 +202,7 @@ export const deleteUser = async (req, res) => {
       });
     }
 
-    // Soft delete
+    // Soft delete - preserves data integrity
     user.isVerified = false;
     await user.save();
 
@@ -321,13 +330,13 @@ export const updateProviderStatus = async (req, res) => {
 
 /**
  * DELETE /api/admin/providers/:id
- * Delete a provider
+ * Soft delete a provider (set isActive to false, preserves data)
  */
 export const deleteProvider = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const provider = await serviceModel.findByIdAndDelete(id);
+    const provider = await serviceModel.findById(id);
 
     if (!provider) {
       return res.status(404).json({
@@ -336,9 +345,13 @@ export const deleteProvider = async (req, res) => {
       });
     }
 
+    // Soft delete - preserve data integrity
+    provider.isActive = false;
+    await provider.save();
+
     return res.status(200).json({
       success: true,
-      message: 'Provider deleted successfully'
+      message: 'Provider deactivated successfully'
     });
   } catch (error) {
     console.error('Error in deleteProvider:', error);
@@ -356,48 +369,58 @@ export const deleteProvider = async (req, res) => {
 /**
  * GET /api/admin/bookings
  * Get all bookings with pagination and filters
+ * Supports search by: seeker name, seeker email
  */
 export const getAllBookings = async (req, res) => {
   try {
-    const { page = 1, limit = 20, status, search } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const status = req.query.status;
+    const search = req.query.search;
 
-    const query = {};
+    // Build query filter
+    const filter = {};
 
-    // Filter by status
+    // Filter by status if provided
     if (status && ['pending', 'confirmed', 'completed', 'cancelled'].includes(status)) {
-      query.status = status;
+      filter.status = status;
     }
 
-    // Search by seeker name or email
+    // Search by seeker name or seeker email
     if (search) {
-      query.$or = [
+      filter.$or = [
         { seekerName: { $regex: search, $options: 'i' } },
         { seekerEmail: { $regex: search, $options: 'i' } }
       ];
     }
 
+    // Calculate pagination
     const skip = (page - 1) * limit;
 
+    // Execute query with pagination
     const [bookings, total] = await Promise.all([
       bookingModel
-        .find(query)
-        .populate('serviceId', 'title price')
-        .populate('providerId', 'businessName')
-        .populate('seekerId', 'name email')
-        .sort({ createdAt: -1 })
+        .find(filter)
+        .populate('seekerId', 'name email') // Populate seeker info
+        .populate('providerId', 'businessName') // Populate provider info
+        .sort({ createdAt: -1 }) // Most recent first
         .skip(skip)
-        .limit(parseInt(limit)),
-      bookingModel.countDocuments(query)
+        .limit(limit)
+        .lean(), // Use lean() for better performance (returns plain JS objects)
+      
+      bookingModel.countDocuments(filter)
     ]);
+
+    const pages = Math.ceil(total / limit);
 
     return res.status(200).json({
       success: true,
-      bookings,
+      data: bookings,
       pagination: {
+        page,
+        limit,
         total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        pages: Math.ceil(total / limit)
+        pages
       }
     });
   } catch (error) {
@@ -408,7 +431,6 @@ export const getAllBookings = async (req, res) => {
     });
   }
 };
-
 // ============================================
 // CATEGORY MANAGEMENT
 // ============================================
