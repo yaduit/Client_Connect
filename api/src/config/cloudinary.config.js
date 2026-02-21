@@ -4,13 +4,23 @@ const required = ['CLOUDINARY_CLOUD_NAME','CLOUDINARY_API_KEY','CLOUDINARY_API_S
 const missing = required.filter(k => !process.env[k]);
 
 if (missing.length > 0) {
-  console.warn(`⚠️ Cloudinary NOT configured. Missing env: ${missing.join(', ')}. Image uploads will fail until configured.`);
+  console.warn(`⚠️  WARNING: Cloudinary NOT fully configured.`);
+  console.warn(`   Missing environment variables: ${missing.join(', ')}`);
+  console.warn(`   Image uploads will FAIL until these are configured.`);
+  console.warn(`   Please add to your .env file:`);
+  missing.forEach(v => console.warn(`   ${v}=your_value`));
 } else {
-  cloudinary.config({
-    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_API_SECRET
-  });
+  // ✅ Configure cloudinary only if all credentials are present
+  try {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+      api_key: process.env.CLOUDINARY_API_KEY,
+      api_secret: process.env.CLOUDINARY_API_SECRET
+    });
+    console.log('✅ Cloudinary configured successfully');
+  } catch (err) {
+    console.error('❌ Failed to configure Cloudinary:', err.message);
+  }
 }
 
 export default cloudinary;

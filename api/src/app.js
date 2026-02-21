@@ -3,11 +3,14 @@ import cors from 'cors'
 import authRoutes from './modules/auth/auth.routes.js'
 import categoryRoutes from './modules/categories/category.routes.js'
 import serviceProviderRoutes from './modules/services/serviceProvider.routes.js'
+import serviceRoutes from './modules/services/service.routes.js'
 import searchRoutes from './modules/search/search.routes.js'
 import bookingRoutes from './modules/booking/booking.routes.js'
 import contactRequestRoutes from './modules/contactRequests/contactRequest.routes.js'
 import adminRoutes from './modules/admin/admin.routes.js'
 import cookieParser from 'cookie-parser'
+import errorHandler from './middlewares/error.middleware.js'
+
 const app = express();
 
 app.use(cors({
@@ -26,14 +29,13 @@ app.get("/", function(req,res){
 app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/providers', serviceProviderRoutes);
+app.use('/api/services', serviceRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/contact-request', contactRequestRoutes);
 app.use('/api/admin', adminRoutes)
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ message: 'Internal server error' });
-});
+// ✅ Global Error Handler (must be last)
+app.use(errorHandler);
 
 export default app;
