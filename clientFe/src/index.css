@@ -12,9 +12,11 @@
   --color-bg-main: #f9fafb;
   --color-bg-card: #ffffff;
   
-  /* Text Colors */
-  --color-text-primary: #111827;
+  /* Text Colors - Elegant Light Colors (No Pure Black) */
+  --color-text-primary: #374151;
+  --color-text-heading: #1f2937;
   --color-text-secondary: #6b7280;
+  --color-text-light: #9ca3af;
   
   /* Borders */
   --color-border: #e5e7eb;
@@ -48,11 +50,11 @@
 }
 
 /* ============================================ */
-/* MANROPE FONT - LOUIS VUITTON STYLE          */
+/* PREMIUM FONT STACK - DIFFERENT PER SECTION  */
 /* ============================================ */
 
 * {
-  font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -60,22 +62,24 @@
 body {
   background-color: var(--color-bg-main);
   color: var(--color-text-primary);
-  font-family: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   margin: 0;
-  line-height: 1.5;
-  letter-spacing: -0.01em; /* Tighter spacing like Louis Vuitton */
+  line-height: 1.6;
+  letter-spacing: -0.01em;
   font-feature-settings: 'kern' 1, 'liga' 1;
 }
 
 /* ============================================ */
-/* TYPOGRAPHY - ELEGANT LV AESTHETIC           */
+/* TYPOGRAPHY - ELEGANT PREMIUM AESTHETIC      */
 /* ============================================ */
 
+/* ✅ HEADINGS: Sora - Modern & Premium with Light Colors */
 h1, h2, h3, h4, h5, h6 {
+  font-family: 'Sora', sans-serif;
   font-weight: 600;
-  letter-spacing: -0.02em; /* Tight letter spacing */
+  letter-spacing: -0.02em;
   line-height: 1.2;
-  color: var(--color-text-primary);
+  color: var(--color-text-heading);
 }
 
 h1 {
@@ -120,11 +124,11 @@ p {
 }
 
 /* ============================================ */
-/* BUTTONS - PREMIUM LV STYLE                   */
+/* BUTTONS - PREMIUM STYLE WITH POPPINS       */
 /* ============================================ */
 
 button, .btn {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-weight: 500;
   letter-spacing: 0.02em;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -153,11 +157,11 @@ a:hover {
 }
 
 /* ============================================ */
-/* FORMS                                        */
+/* FORMS - Inter FOR READABILITY                */
 /* ============================================ */
 
 input, textarea, select {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
   letter-spacing: -0.005em;
 }
@@ -269,20 +273,22 @@ textarea::placeholder {
 }
 
 /* ============================================ */
-/* ADMIN PANEL SPECIFIC                         */
+/* ADMIN PANEL - OUTFIT FOR CONSISTENCY        */
 /* ============================================ */
 
 .admin-layout {
-  font-family: 'Manrope', sans-serif;
+  font-family: 'Outfit', sans-serif;
 }
 
 .admin-layout h1,
 .admin-layout h2,
 .admin-layout h3 {
+  font-family: 'Sora', sans-serif;
   letter-spacing: -0.015em;
   font-weight: 600;
 }
 
 .admin-layout table {
+  font-family: 'Inter', sans-serif;
   letter-spacing: -0.005em;
 }

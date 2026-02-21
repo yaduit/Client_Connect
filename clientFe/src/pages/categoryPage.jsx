@@ -27,7 +27,7 @@ const CategoryPage = () => {
           <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-4">
             <AlertCircle className="w-6 h-6 text-red-600" />
           </div>
-          <h2 className="text-xl font-bold text-gray-900 mb-2">
+          <h2 className="text-xl font-bold text-gray-800 mb-2">
             Category Not Found
           </h2>
           <p className="text-gray-600 text-sm mb-6">

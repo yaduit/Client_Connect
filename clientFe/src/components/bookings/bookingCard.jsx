@@ -170,7 +170,7 @@ const BookingCard = ({ booking, onStatusChange }) => {
               {config.label}
             </span>
           </div>
-          <h4 className="text-lg font-bold text-gray-900">
+          <h4 className="text-lg font-bold text-gray-800">
             {booking.serviceId?.title}
           </h4>
         </div>
@@ -178,7 +178,7 @@ const BookingCard = ({ booking, onStatusChange }) => {
         {/* Price */}
         <div className="text-right">
           <p className="text-xs text-gray-600">Total Amount</p>
-          <p className="text-xl font-bold text-gray-900">
+          <p className="text-xl font-bold text-gray-800">
             ₹{booking.totalAmount}
           </p>
         </div>
@@ -190,7 +190,7 @@ const BookingCard = ({ booking, onStatusChange }) => {
           <User className="w-4 h-4 text-gray-600" />
           <div>
             <p className="text-xs text-gray-600">Requested by</p>
-            <p className="font-medium text-gray-900">{booking.seekerName}</p>
+            <p className="font-medium text-gray-800">{booking.seekerName}</p>
           </div>
         </div>
 
@@ -221,7 +221,7 @@ const BookingCard = ({ booking, onStatusChange }) => {
       <div className="grid grid-cols-2 gap-4 mb-4">
         <div className="bg-white/50 rounded-lg p-3">
           <p className="text-xs text-gray-600">Date & Time</p>
-          <p className="font-semibold text-gray-900">{bookingDate}</p>
+          <p className="font-semibold text-gray-800">{bookingDate}</p>
           <p className="text-sm text-gray-700">{booking.bookingTime}</p>
         </div>
 
@@ -229,7 +229,7 @@ const BookingCard = ({ booking, onStatusChange }) => {
           <p className="text-xs text-gray-600">Duration</p>
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-gray-600" />
-            <span className="font-semibold text-gray-900">{durationDisplay}</span>
+            <span className="font-semibold text-gray-800">{durationDisplay}</span>
           </div>
         </div>
       </div>

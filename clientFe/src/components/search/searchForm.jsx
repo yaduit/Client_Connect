@@ -139,7 +139,7 @@ const SearchForm = () => {
             <button
               type="button"
               onClick={() => navigate("/")}
-              className="flex-shrink-0 flex items-center gap-1 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex-shrink-0 flex items-center gap-1 text-gray-600 hover:text-gray-800 transition-colors"
               title="Go Back"
             >
               <ChevronLeft className="w-4 h-4" />

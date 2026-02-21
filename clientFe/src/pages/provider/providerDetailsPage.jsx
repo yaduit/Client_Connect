@@ -4,6 +4,7 @@ import { getProviderByIdApi } from "../../api/provider.api.js";
 import ProviderDetailsSkeleton from "../../components/providers/providerDetailsSkeleton.jsx";
 import ProviderHeader from "../../components/providers/providerHeader.jsx";
 import ProviderHero from "../../components/providers/providerHero.jsx";
+import ImageCarousel from "../../components/common/imageCarousel.jsx";
 import ReviewSection from "../../components/providers/reviewSection.jsx";
 import ServicePackages from "../../components/providers/servicePackage.jsx";
 import ContactModal from "../../components/providers/contactSection.jsx";
@@ -48,7 +49,7 @@ const ProviderDetails = () => {
         <div className="min-h-[calc(100vh-60px)] flex items-center justify-center px-4">
           <div className="text-center max-w-sm">
             <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">
+            <h2 className="text-lg font-semibold text-gray-800 mb-2">
               Provider Not Found
             </h2>
             <p className="text-gray-600 mb-6">{error}</p>
@@ -72,10 +73,15 @@ const ProviderDetails = () => {
         {/* Hero Section */}
         <ProviderHero provider={provider} />
 
+        {/* Image Carousel Gallery */}
+        {provider.images && provider.images.length > 0 && (
+          <ImageCarousel images={provider.images} title="Portfolio & Photos" />
+        )}
+
         {/* About Section */}
         {provider.description && (
           <section className="py-12 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">About</h2>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4">About</h2>
             <p className="text-gray-600 leading-relaxed text-sm">
               {provider.description}
             </p>
@@ -94,7 +100,7 @@ const ProviderDetails = () => {
 
         {/* CTA Section - SINGLE BUTTON */}
         <section className="py-12 text-center border-t border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          <h2 className="text-xl font-semibold text-gray-800 mb-2">
             Ready to get started?
           </h2>
           <p className="text-gray-600 text-sm mb-6">

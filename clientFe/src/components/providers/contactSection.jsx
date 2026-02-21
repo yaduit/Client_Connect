@@ -57,7 +57,7 @@ const ContactModal = ({ provider, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 bg-gray-800/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div 
         className="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -65,7 +65,7 @@ const ContactModal = ({ provider, onClose }) => {
         {/* Header */}
         <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">Contact Provider</h2>
+            <h2 className="text-lg font-semibold text-gray-800">Contact Provider</h2>
             <p className="text-sm text-gray-600 mt-0.5">{provider.businessName}</p>
           </div>
           <button
@@ -83,7 +83,7 @@ const ContactModal = ({ provider, onClose }) => {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
               Request Sent Successfully!
             </h3>
             <p className="text-gray-600 text-sm">

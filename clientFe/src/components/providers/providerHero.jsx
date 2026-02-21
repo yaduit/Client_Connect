@@ -9,7 +9,7 @@ const ProviderHero = ({ provider }) => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
         {/* Image */}
         <div className="sm:col-span-1">
-          <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden flex items-center justify-center relative">
+          <div className="aspect-square bg-linear-to-br from-gray-100 to-gray-200 rounded-lg overflow-hidden flex items-center justify-center relative">
             {provider.image ? (
               <img
                 src={provider.image}
@@ -33,7 +33,7 @@ const ProviderHero = ({ provider }) => {
           {/* Name & Category */}
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-gray-800">
                 {provider.businessName}
               </h1>
               <p className="text-sm text-gray-600 mt-1">
@@ -90,7 +90,7 @@ const ProviderHero = ({ provider }) => {
                 />
               ))}
             </div>
-            <span className="text-sm font-medium text-gray-900">
+            <span className="text-sm font-medium text-gray-800">
               {provider.ratingAverage?.toFixed(1)} ({provider.totalReviews})
             </span>
           </div>

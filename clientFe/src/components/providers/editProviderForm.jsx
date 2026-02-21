@@ -135,7 +135,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
       <div className="bg-white rounded-xl shadow-lg p-8">
         {/* Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
             Edit Your Service
           </h2>
           <p className="text-gray-600">
@@ -176,7 +176,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
                 type="text"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 ${
+                className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 ${
                   fieldErrors.businessName ? "border-red-500" : "border-gray-300"
                 }`}
                 required
@@ -200,7 +200,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 resize-none ${
+                className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 resize-none ${
                   fieldErrors.description ? "border-red-500" : "border-gray-300"
                 }`}
                 rows={4}
@@ -215,7 +215,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
 
           {/* ============ IMAGE MANAGEMENT SECTION ============ */}
           <div className="bg-linear-to-br from-blue-50 to-indigo-50 rounded-lg p-6 border border-blue-100">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">
               Manage Images ({totalCurrentImages}/{maxImages})
             </h3>
 
@@ -244,7 +244,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
                       >
                         <X className="w-4 h-4" />
                       </button>
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                      <div className="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-600/20 transition-colors flex items-center justify-center">
                         <span className="text-xs text-white font-medium bg-gray-800/70 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                           Click to delete
                         </span>
@@ -277,7 +277,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
                         <button
                           type="button"
                           onClick={() => handleUndoDelete(image.publicId)}
-                          className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute inset-0 flex items-center justify-center bg-gray-700/40 opacity-0 group-hover:opacity-100 transition-opacity"
                           title="Undo delete"
                         >
                           <span className="text-xs text-white font-medium bg-gray-800/70 px-2 py-1 rounded">
@@ -317,7 +317,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
 
           {/* Location Section */}
           <div className="bg-gray-50 rounded-lg p-6 space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
               <MapPinned className="w-5 h-5 text-green-600" />
               Service Location
             </h3>
@@ -332,7 +332,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
                   type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 ${
                     fieldErrors.city ? "border-red-500" : "border-gray-300"
                   }`}
                   required
@@ -353,7 +353,7 @@ const EditProviderForm = ({ provider, onSuccess, onCancel }) => {
                   type="text"
                   value={state}
                   onChange={(e) => setState(e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 ${
                     fieldErrors.state ? "border-red-500" : "border-gray-300"
                   }`}
                   required

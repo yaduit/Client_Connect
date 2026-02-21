@@ -206,7 +206,7 @@ const EditProviderModal = ({ provider, isOpen, onClose, onSuccess, mode = "edit"
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+        className="fixed inset-0 bg-gray-800/50 backdrop-blur-sm z-40"
         onClick={handleClose}
       />
 
@@ -349,7 +349,7 @@ const EditProviderModal = ({ provider, isOpen, onClose, onSuccess, mode = "edit"
 
             {/* ============ IMAGE MANAGEMENT SECTION ============ */}
             <div className="bg-blue-50 rounded-lg p-6 border border-blue-100">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">
                 Manage Images ({totalCurrentImages}/{maxImages})
               </h3>
 
@@ -382,7 +382,7 @@ const EditProviderModal = ({ provider, isOpen, onClose, onSuccess, mode = "edit"
                         >
                           <X className="w-4 h-4" />
                         </button>
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                        <div className="absolute inset-0 bg-gray-900/0 group-hover:bg-gray-600/20 transition-colors flex items-center justify-center">
                           <span className="text-xs text-white font-medium bg-gray-800/70 px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
                             Click to delete
                           </span>
@@ -415,7 +415,7 @@ const EditProviderModal = ({ provider, isOpen, onClose, onSuccess, mode = "edit"
                           <button
                             type="button"
                             onClick={() => handleUndoDelete(image.publicId)}
-                            className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute inset-0 flex items-center justify-center bg-gray-700/40 opacity-0 group-hover:opacity-100 transition-opacity"
                             title="Undo delete"
                           >
                             <span className="text-xs text-white font-medium bg-gray-800/70 px-2 py-1 rounded">

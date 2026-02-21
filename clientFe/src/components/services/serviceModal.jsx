@@ -6,13 +6,13 @@ const ServiceModal = ({ isOpen, onClose, onSuccess }) => {
 
   return (
     <>
-      <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
+      <div className="fixed inset-0 bg-gray-700/40 z-40" onClick={onClose} />
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-lg max-w-2xl w-full p-6" onClick={(e) => e.stopPropagation()}>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold">Create Service</h2>
-            <button onClick={onClose} className="p-2 rounded hover:bg-gray-100"><X /></button>
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-2">
+        <div className="bg-white rounded-xl shadow-lg max-w-md w-full p-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-bold text-gray-800">Create Service</h2>
+            <button onClick={onClose} className="p-1.5 rounded hover:bg-gray-100 transition-colors"><X className="w-4 h-4" /></button>
           </div>
 
           <ServiceForm

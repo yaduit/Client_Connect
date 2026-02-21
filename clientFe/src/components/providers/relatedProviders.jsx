@@ -18,7 +18,7 @@ const RelatedProviders = ({ categoryId, currentProviderId }) => {
   return (
     <section className="bg-white rounded-lg p-8 shadow-sm border border-gray-200">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold text-gray-900">Similar Providers</h2>
+        <h2 className="text-2xl font-bold text-gray-800">Similar Providers</h2>
         <a href={`/search?categoryId=${categoryId}`} className="text-green-600 hover:text-green-700 font-medium flex items-center gap-1">
           View All <ChevronRight className="w-4 h-4" />
         </a>

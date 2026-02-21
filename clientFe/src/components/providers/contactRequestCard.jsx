@@ -67,7 +67,7 @@ const ContactRequestCard = ({ request, onStatusChange }) => {
             <User className="w-5 h-5 text-green-600" />
           </div>
           <div>
-            <h3 className="font-semibold text-gray-900">{request.seeker.name}</h3>
+            <h3 className="font-semibold text-gray-800">{request.seeker.name}</h3>
             <p className="text-xs text-gray-500">{formatDate(request.createdAt)}</p>
           </div>
         </div>

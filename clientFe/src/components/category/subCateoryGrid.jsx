@@ -9,7 +9,7 @@ const SubCategoryGrid = ({ subCategories, onSelect }) => {
             <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
               <Package className="w-6 h-6 text-gray-400" />
             </div>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            <h3 className="text-lg font-semibold text-gray-800 mb-2">
               No Services Available
             </h3>
             <p className="text-sm text-gray-600">
@@ -54,7 +54,7 @@ const SubCategoryGrid = ({ subCategories, onSelect }) => {
                 </div>
 
                 {/* Title - Updated with elegant class */}
-                <h3 className="text-elegant text-base text-gray-900 mb-2 group-hover:text-green-600 transition-colors duration-200">
+                <h3 className="text-elegant text-base text-gray-800 mb-2 group-hover:text-green-600 transition-colors duration-200">
                   {sub.name}
                 </h3>
 

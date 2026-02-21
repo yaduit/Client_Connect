@@ -246,7 +246,7 @@ const ImageUploadSection = ({
                   alt="Service"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-gray-700/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <span className="text-xs text-white font-medium bg-gray-800/60 px-2 py-1 rounded">
                     Existing
                   </span>
@@ -273,7 +273,7 @@ const ImageUploadSection = ({
                 >
                   <X className="w-4 h-4" />
                 </button>
-                <div className="absolute bottom-0 inset-x-0 bg-black/40 px-2 py-1">
+                <div className="absolute bottom-0 inset-x-0 bg-gray-700/40 px-2 py-1">
                   <p className="text-xs text-white truncate">{preview.name}</p>
                 </div>
               </div>

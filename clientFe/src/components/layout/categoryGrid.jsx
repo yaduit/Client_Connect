@@ -73,7 +73,7 @@ const CategoryGrid = () => {
       <section className="bg-gray-50 py-16 sm:py-20 lg:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-3">
               Browse Services by Category
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -122,7 +122,7 @@ const CategoryGrid = () => {
         
         {/* Section Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-3">
             Browse Services by Category
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -145,7 +145,7 @@ const CategoryGrid = () => {
               </div>
               
               {/* Category Name */}
-              <h3 className="font-bold text-gray-900 mb-1 text-sm sm:text-base">
+              <h3 className="font-bold text-gray-800 mb-1 text-sm sm:text-base">
                 {category.name}
               </h3>
               

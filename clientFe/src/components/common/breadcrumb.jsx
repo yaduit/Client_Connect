@@ -25,7 +25,7 @@ const Breadcrumb = ({ items = [] }) => {
           {/* Home Icon Link */}
           <Link
             to="/"
-            className="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors shrink-0 text-gray-600 hover:text-gray-900"
+            className="inline-flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors shrink-0 text-gray-600 hover:text-gray-800"
             aria-label="Home"
             title="Home"
           >
@@ -41,14 +41,14 @@ const Breadcrumb = ({ items = [] }) => {
               {/* Item */}
               {index === items.length - 1 ? (
                 // Last item - not clickable (current page)
-                <span className="text-sm font-medium text-gray-900 whitespace-nowrap">
+                <span className="text-sm font-medium text-gray-800 whitespace-nowrap">
                   {item.label}
                 </span>
               ) : (
                 // Clickable item
                 <Link
                   to={item.path}
-                  className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors whitespace-nowrap"
+                  className="text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors whitespace-nowrap"
                 >
                   {item.label}
                 </Link>

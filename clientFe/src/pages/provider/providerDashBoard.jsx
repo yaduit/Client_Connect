@@ -67,7 +67,7 @@ const ProviderDashboard = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="bg-white rounded-xl shadow-lg border border-red-200 p-8 max-w-sm w-full text-center">
           <AlertCircle className="w-14 h-14 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-gray-900 mb-2">Error Loading Dashboard</h2>
+          <h2 className="text-xl font-bold text-gray-800 mb-2">Error Loading Dashboard</h2>
           <p className="text-gray-600 mb-6">{error}</p>
           <button
             onClick={() => window.location.reload()}
@@ -114,7 +114,7 @@ const ProviderDashboard = () => {
               <Home className="w-4 h-4" />
               Back to Home
             </Link>
-            <h1 className="text-base sm:text-lg font-bold text-gray-900">Provider Dashboard</h1>
+            <h1 className="text-base sm:text-lg font-bold text-gray-800">Provider Dashboard</h1>
             <button
               onClick={() => setIsEditModalOpen(true)}
               className="p-2 hover:bg-gray-100 rounded-lg transition"
@@ -132,7 +132,7 @@ const ProviderDashboard = () => {
         <div className="mb-10">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-gray-900">{provider.businessName}</h2>
+              <h2 className="text-3xl font-bold text-gray-800">{provider.businessName}</h2>
               <p className="text-gray-600 mt-1">
                 {provider.location?.city}, {provider.location?.state}
               </p>
@@ -190,7 +190,7 @@ const ProviderDashboard = () => {
                 <TrendingUp className="w-5 h-5 text-blue-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{services.length}</p>
+            <p className="text-2xl font-bold text-gray-800">{services.length}</p>
             <p className="text-xs text-gray-500 mt-1">Active listings</p>
           </div>
 
@@ -202,7 +202,7 @@ const ProviderDashboard = () => {
                 <Power className="w-5 h-5 text-emerald-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{services.filter(s => s.isActive).length}</p>
+            <p className="text-2xl font-bold text-gray-800">{services.filter(s => s.isActive).length}</p>
             <p className="text-xs text-gray-500 mt-1">Live & visible</p>
           </div>
 
@@ -214,7 +214,7 @@ const ProviderDashboard = () => {
                 <Calendar className="w-5 h-5 text-purple-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{bookings.length}</p>
+            <p className="text-2xl font-bold text-gray-800">{bookings.length}</p>
             <p className="text-xs text-gray-500 mt-1">Upcoming</p>
           </div>
 
@@ -226,7 +226,7 @@ const ProviderDashboard = () => {
                 <Eye className="w-5 h-5 text-orange-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{provider.totalViews || 0}</p>
+            <p className="text-2xl font-bold text-gray-800">{provider.totalViews || 0}</p>
             <p className="text-xs text-gray-500 mt-1">Profile views</p>
           </div>
 
@@ -238,7 +238,7 @@ const ProviderDashboard = () => {
                 <MessageSquare className="w-5 h-5 text-pink-600" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-gray-900">{requestStats.total}</p>
+            <p className="text-2xl font-bold text-gray-800">{requestStats.total}</p>
             <p className="text-xs text-gray-500 mt-1">{requestStats.pending} pending</p>
           </div>
         </div>
@@ -277,7 +277,7 @@ const ProviderDashboard = () => {
               className={`pb-4 font-medium transition-colors border-b-2 ${
                 activeTab === "services"
                   ? "text-emerald-600 border-emerald-600"
-                  : "text-gray-600 border-transparent hover:text-gray-900"
+                  : "text-gray-600 border-transparent hover:text-gray-800"
               }`}
             >
               My Services
@@ -287,7 +287,7 @@ const ProviderDashboard = () => {
               className={`pb-4 font-medium transition-colors border-b-2 flex items-center gap-2 ${
                 activeTab === "bookings"
                   ? "text-emerald-600 border-emerald-600"
-                  : "text-gray-600 border-transparent hover:text-gray-900"
+                  : "text-gray-600 border-transparent hover:text-gray-800"
               }`}
             >
               Upcoming Bookings
@@ -302,7 +302,7 @@ const ProviderDashboard = () => {
               className={`pb-4 font-medium transition-colors border-b-2 flex items-center gap-2 ${
                 activeTab === "contact-requests"
                   ? "text-emerald-600 border-emerald-600"
-                  : "text-gray-600 border-transparent hover:text-gray-900"
+                  : "text-gray-600 border-transparent hover:text-gray-800"
               }`}
             >
               Contact Requests
@@ -317,7 +317,7 @@ const ProviderDashboard = () => {
               className={`pb-4 font-medium transition-colors border-b-2 ${
                 activeTab === "analytics"
                   ? "text-emerald-600 border-emerald-600"
-                  : "text-gray-600 border-transparent hover:text-gray-900"
+                  : "text-gray-600 border-transparent hover:text-gray-800"
               }`}
             >
               Analytics
@@ -329,7 +329,7 @@ const ProviderDashboard = () => {
         {activeTab === "services" && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h3 className="text-xl font-bold text-gray-900">My Services</h3>
+              <h3 className="text-xl font-bold text-gray-800">My Services</h3>
               <button
                 onClick={() => {
                   setIsCreateServiceOpen(true);
@@ -351,7 +351,7 @@ const ProviderDashboard = () => {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Trash2 className="w-8 h-8 text-gray-400" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Services Yet</h4>
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">No Services Yet</h4>
                 <p className="text-gray-600 mb-6">Start by creating your first service to begin receiving customer inquiries</p>
                 <button
                   onClick={() => {
@@ -385,7 +385,7 @@ const ProviderDashboard = () => {
         {/* ============ BOOKINGS TAB ============ */}
         {activeTab === "bookings" && (
           <div>
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Upcoming Bookings</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-6">Upcoming Bookings</h3>
 
             {bookingsLoading ? (
               <div className="bg-white rounded-lg p-6 text-center">
@@ -397,7 +397,7 @@ const ProviderDashboard = () => {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Calendar className="w-8 h-8 text-gray-400" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Upcoming Bookings</h4>
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">No Upcoming Bookings</h4>
                 <p className="text-gray-600">Bookings will appear here when seekers request your services</p>
               </div>
             ) : (
@@ -441,7 +441,7 @@ const ProviderDashboard = () => {
         {/* ============ CONTACT REQUESTS TAB ============ */}
         {activeTab === "contact-requests" && (
           <div>
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Contact Requests</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-6">Contact Requests</h3>
 
             {requestsLoading ? (
               <div className="bg-white rounded-lg p-6 text-center">
@@ -453,7 +453,7 @@ const ProviderDashboard = () => {
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <MessageSquare className="w-8 h-8 text-gray-400" />
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">No Contact Requests</h4>
+                <h4 className="text-lg font-semibold text-gray-800 mb-2">No Contact Requests</h4>
                 <p className="text-gray-600">Contact requests from users will appear here</p>
               </div>
             ) : (
@@ -462,7 +462,7 @@ const ProviderDashboard = () => {
                 <div className="grid grid-cols-4 gap-4 mb-6">
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
                     <p className="text-sm text-gray-700 font-medium">Total</p>
-                    <p className="text-2xl font-bold text-gray-900 mt-1">{requestStats.total}</p>
+                    <p className="text-2xl font-bold text-gray-800 mt-1">{requestStats.total}</p>
                   </div>
                   <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-center">
                     <p className="text-sm text-yellow-700 font-medium">Pending</p>
@@ -501,34 +501,34 @@ const ProviderDashboard = () => {
         {/* ============ ANALYTICS TAB ============ */}
         {activeTab === "analytics" && (
           <div>
-            <h3 className="text-xl font-bold text-gray-900 mb-6">Performance Analytics</h3>
+            <h3 className="text-xl font-bold text-gray-800 mb-6">Performance Analytics</h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Overview Cards */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h4 className="font-semibold text-gray-900 mb-4">Overview</h4>
+                <h4 className="font-semibold text-gray-800 mb-4">Overview</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                     <span className="text-gray-600">Average Rating</span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-800">
                       {provider.ratingAverage || "—"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                     <span className="text-gray-600">Total Reviews</span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-800">
                       {provider.totalReviews || 0}
                     </span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                     <span className="text-gray-600">Completion Rate</span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-800">
                       {provider.completionRate || 0}%
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Response Time</span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-800">
                       {provider.avgResponseTime || "—"}h
                     </span>
                   </div>
@@ -537,27 +537,27 @@ const ProviderDashboard = () => {
 
               {/* Service Performance */}
               <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-                <h4 className="font-semibold text-gray-900 mb-4">Service Performance</h4>
+                <h4 className="font-semibold text-gray-800 mb-4">Service Performance</h4>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                     <span className="text-gray-600">Total Services</span>
-                    <span className="text-2xl font-bold text-gray-900">{services.length}</span>
+                    <span className="text-2xl font-bold text-gray-800">{services.length}</span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                     <span className="text-gray-600">Active Services</span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-800">
                       {services.filter(s => s.isActive).length}
                     </span>
                   </div>
                   <div className="flex justify-between items-center pb-3 border-b border-gray-200">
                     <span className="text-gray-600">Total Bookings</span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-800">
                       {provider.totalBookings || 0}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Profile Views</span>
-                    <span className="text-2xl font-bold text-gray-900">
+                    <span className="text-2xl font-bold text-gray-800">
                       {provider.totalViews || 0}
                     </span>
                   </div>
@@ -605,7 +605,7 @@ const ProviderDashboard = () => {
       {/* Image Preview Modal */}
       {showImageModal && images[selectedImageIndex] && (
         <div
-          className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-gray-900/80 z-50 flex items-center justify-center p-4"
           onClick={() => setShowImageModal(false)}
         >
           <div

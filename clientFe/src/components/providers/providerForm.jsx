@@ -168,7 +168,7 @@ const ProviderForm = () => {
       <div className="bg-white rounded-xl shadow-lg p-8">
         {/* Header */}
         <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-3xl font-bold text-gray-800 mb-2">
             Publish Your Service
           </h2>
           <p className="text-gray-600">
@@ -219,7 +219,7 @@ const ProviderForm = () => {
                 placeholder="e.g., John's Plumbing Services"
                 value={businessName}
                 onChange={(e) => setBusinessName(e.target.value)}
-                className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 ${
+                className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder:text-gray-400 ${
                   fieldErrors.businessName
                     ? "border-red-500"
                     : "border-gray-300"
@@ -249,7 +249,7 @@ const ProviderForm = () => {
                 setCategoryId(e.target.value);
                 setSubCategorySlug("");
               }}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 ${
                 fieldErrors.categoryId ? "border-red-500" : "border-gray-300"
               }`}
               disabled={categoriesLoading}
@@ -282,7 +282,7 @@ const ProviderForm = () => {
                 id="subcategory"
                 value={subCategorySlug}
                 onChange={(e) => setSubCategorySlug(e.target.value)}
-                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 ${
+                className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 ${
                   fieldErrors.subCategorySlug
                     ? "border-red-500"
                     : "border-gray-300"
@@ -319,7 +319,7 @@ const ProviderForm = () => {
                 placeholder="Describe your services, experience, and what makes you stand out..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 resize-none ${
+                className={`w-full pl-11 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder:text-gray-400 resize-none ${
                   fieldErrors.description ? "border-red-500" : "border-gray-300"
                 }`}
                 rows={4}
@@ -345,7 +345,7 @@ const ProviderForm = () => {
           {/* Location Section */}
           <div className="bg-gray-50 rounded-lg p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-gray-800 flex items-center gap-2">
                 <MapPinned className="w-5 h-5 text-green-600" />
                 Service Location
               </h3>
@@ -393,7 +393,7 @@ const ProviderForm = () => {
                   placeholder="Enter city"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder:text-gray-400 ${
                     fieldErrors.city ? "border-red-500" : "border-gray-300"
                   }`}
                   required
@@ -418,7 +418,7 @@ const ProviderForm = () => {
                   placeholder="Enter state"
                   value={state}
                   onChange={(e) => setState(e.target.value)}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 ${
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder:text-gray-400 ${
                     fieldErrors.state ? "border-red-500" : "border-gray-300"
                   }`}
                   required

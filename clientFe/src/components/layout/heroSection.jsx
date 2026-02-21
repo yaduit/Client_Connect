@@ -101,7 +101,7 @@ const HeroSection = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
           {/* ✅ LV-style Heading */}
-          <h1 className="heading-display text-5xl sm:text-6xl lg:text-7xl text-gray-900 mb-6">
+          <h1 className="heading-display text-5xl sm:text-6xl lg:text-7xl text-gray-800 mb-6">
             FIND TRUSTED LOCAL SERVICES{" "}
             <span className="text-green-600">NEAR YOU</span>
           </h1>

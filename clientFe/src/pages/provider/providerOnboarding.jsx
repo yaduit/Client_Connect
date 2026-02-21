@@ -41,7 +41,7 @@ const ProviderOnboarding = () => {
             <Sparkles className="w-8 h-8 text-green-600" />
           </div>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             Become a Service Provider
           </h1>
           
@@ -56,7 +56,7 @@ const ProviderOnboarding = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mb-3">
                 <Users className="w-6 h-6 text-green-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="font-semibold text-gray-800 mb-2">
                 Reach More Clients
               </h3>
               <p className="text-sm text-gray-600">
@@ -68,7 +68,7 @@ const ProviderOnboarding = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-3">
                 <TrendingUp className="w-6 h-6 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="font-semibold text-gray-800 mb-2">
                 Grow Your Business
               </h3>
               <p className="text-sm text-gray-600">
@@ -80,7 +80,7 @@ const ProviderOnboarding = () => {
               <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mb-3">
                 <Clock className="w-6 h-6 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">
+              <h3 className="font-semibold text-gray-800 mb-2">
                 Work Your Way
               </h3>
               <p className="text-sm text-gray-600">
@@ -97,7 +97,7 @@ const ProviderOnboarding = () => {
               <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-semibold">
                 1
               </div>
-              <span className="text-sm font-medium text-gray-900">Service Details</span>
+              <span className="text-sm font-medium text-gray-800">Service Details</span>
             </div>
             <div className="w-12 h-0.5 bg-gray-300"></div>
             <div className="flex items-center gap-2">

@@ -144,7 +144,7 @@ const SignupForm = () => {
             onChange={handleFieldChange}
             disabled={loading}
             required
-            className={`w-full pl-11 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 disabled:bg-gray-50 ${
+            className={`w-full pl-11 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder:text-gray-400 disabled:bg-gray-50 ${
               fieldErrors.name ? "border-red-300 bg-red-50" : "border-gray-300"
             }`}
           />
@@ -172,7 +172,7 @@ const SignupForm = () => {
             onChange={handleFieldChange}
             disabled={loading}
             required
-            className={`w-full pl-11 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 disabled:bg-gray-50 ${
+            className={`w-full pl-11 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder:text-gray-400 disabled:bg-gray-50 ${
               fieldErrors.email ? "border-red-300 bg-red-50" : "border-gray-300"
             }`}
           />
@@ -200,7 +200,7 @@ const SignupForm = () => {
             onChange={handleFieldChange}
             disabled={loading}
             required
-            className={`w-full pl-11 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-900 placeholder:text-gray-400 disabled:bg-gray-50 ${
+            className={`w-full pl-11 pr-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all text-gray-800 placeholder:text-gray-400 disabled:bg-gray-50 ${
               fieldErrors.password ? "border-red-300 bg-red-50" : "border-gray-300"
             }`}
           />

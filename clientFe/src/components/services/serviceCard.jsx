@@ -84,7 +84,7 @@ const ServiceCard = ({
 
         {/* Image Count */}
         {service.images && service.images.length > 1 && (
-          <div className="absolute bottom-3 right-3 bg-black/60 text-white px-2 py-1 rounded text-xs font-medium">
+          <div className="absolute bottom-3 right-3 bg-gray-800/60 text-white px-2 py-1 rounded text-xs font-medium">
             {service.images.length} photos
           </div>
         )}
@@ -94,7 +94,7 @@ const ServiceCard = ({
       <div className="p-5 space-y-4">
         {/* Title & Description */}
         <div>
-          <h4 className="text-lg font-bold text-gray-900 line-clamp-1">
+          <h4 className="text-lg font-bold text-gray-800 line-clamp-1">
             {service.title}
           </h4>
           <p className="text-sm text-gray-600 line-clamp-2 mt-1">
@@ -106,19 +106,19 @@ const ServiceCard = ({
         <div className="grid grid-cols-3 gap-3 bg-gray-50 rounded-lg p-3">
           <div className="text-center">
             <p className="text-xs text-gray-600">Views</p>
-            <p className="text-lg font-bold text-gray-900">
+            <p className="text-lg font-bold text-gray-800">
               {service.totalViews || 0}
             </p>
           </div>
           <div className="text-center">
             <p className="text-xs text-gray-600">Bookings</p>
-            <p className="text-lg font-bold text-gray-900">
+            <p className="text-lg font-bold text-gray-800">
               {service.totalBookings || 0}
             </p>
           </div>
           <div className="text-center">
             <p className="text-xs text-gray-600">Rating</p>
-            <p className="text-lg font-bold text-gray-900">
+            <p className="text-lg font-bold text-gray-800">
               {service.ratingAverage ? service.ratingAverage.toFixed(1) : '—'}
             </p>
           </div>

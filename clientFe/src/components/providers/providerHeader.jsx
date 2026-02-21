@@ -10,7 +10,7 @@ const ProviderHeader = ({ onNavigate }) => {
         <div className="h-14 flex items-center gap-3">
           <button
             onClick={onNavigate || (() => navigate(-1))}
-            className="text-gray-600 hover:text-gray-900 transition-colors"
+            className="text-gray-600 hover:text-gray-800 transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>

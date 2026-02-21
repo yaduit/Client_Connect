@@ -7,7 +7,7 @@ const ReviewSection = ({ reviews }) => {
 
   return (
     <section className="py-12 border-b border-gray-100">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">
+      <h2 className="text-lg font-semibold text-gray-800 mb-6">
         Reviews ({reviews.length})
       </h2>
 
@@ -16,7 +16,7 @@ const ReviewSection = ({ reviews }) => {
           <div key={review._id}>
             <div className="flex items-start justify-between mb-2">
               <div>
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-gray-800">
                   {review.authorName}
                 </p>
                 <p className="text-xs text-gray-500">

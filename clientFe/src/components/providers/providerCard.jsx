@@ -19,7 +19,7 @@ const ProviderCard = ({ provider, loading = false }) => {
       {/* Content */}
       <div className="p-3 sm:p-4 space-y-2">
         {/* Title - Updated with elegant class */}
-        <h3 className="text-elegant text-base sm:text-lg text-gray-900 line-clamp-1 group-hover:text-green-700 transition-colors">
+        <h3 className="text-elegant text-base sm:text-lg text-gray-800 line-clamp-1 group-hover:text-green-700 transition-colors">
           {provider.businessName}
         </h3>
 
@@ -42,7 +42,7 @@ const ProviderCard = ({ provider, loading = false }) => {
         <div className="flex items-center gap-2 text-xs sm:text-sm pt-0.5">
           <div className="flex items-center gap-1 bg-amber-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded">
             <span className="text-amber-500 text-sm leading-none">⭐</span>
-            <span className="font-bold text-gray-900">
+            <span className="font-bold text-gray-800">
               {provider.ratingAverage}
             </span>
           </div>

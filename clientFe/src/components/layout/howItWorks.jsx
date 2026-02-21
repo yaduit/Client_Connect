@@ -48,7 +48,7 @@ const HowItWorks = () => {
         
         {/* Section Header */}
         <div className="text-center mb-10">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-2">
             How It Works
           </h2>
           <p className="text-base text-gray-600">
@@ -73,7 +73,7 @@ const HowItWorks = () => {
 
                 {/* Content */}
                 <div className="flex-1 sm:text-center">
-                  <h3 className="text-base font-bold text-gray-900 mb-1">
+                  <h3 className="text-base font-bold text-gray-800 mb-1">
                     {step.title}
                   </h3>
                   <p className="text-sm text-gray-600">

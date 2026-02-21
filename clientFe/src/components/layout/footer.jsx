@@ -78,7 +78,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-8">
           {/* Brand Column - Updated with elegant typography */}
           <div className="lg:col-span-1">
-            <h3 className="text-xl font-bold text-gray-900 mb-3 tracking-tight">
+            <h3 className="text-xl font-bold text-gray-800 mb-3 tracking-tight">
               CLIENT CONNECT
             </h3>
             <p className="text-sm text-gray-600 leading-relaxed">
@@ -88,7 +88,7 @@ const Footer = () => {
 
           {/* Explore Column */}
           <div>
-            <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4 text-luxury">
+            <h4 className="text-xs font-bold text-gray-800 uppercase tracking-widest mb-4 text-luxury">
               Explore
             </h4>
             <ul className="space-y-3">
@@ -108,7 +108,7 @@ const Footer = () => {
 
           {/* For Providers */}
           <div>
-            <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4 text-luxury">
+            <h4 className="text-xs font-bold text-gray-800 uppercase tracking-widest mb-4 text-luxury">
               For Providers
             </h4>
             <ul className="space-y-3">
@@ -128,7 +128,7 @@ const Footer = () => {
 
           {/* Company */}
           <div>
-            <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4 text-luxury">
+            <h4 className="text-xs font-bold text-gray-800 uppercase tracking-widest mb-4 text-luxury">
               Company
             </h4>
             <ul className="space-y-3">
@@ -148,7 +148,7 @@ const Footer = () => {
 
           {/* Legal */}
           <div>
-            <h4 className="text-xs font-bold text-gray-900 uppercase tracking-widest mb-4 text-luxury">
+            <h4 className="text-xs font-bold text-gray-800 uppercase tracking-widest mb-4 text-luxury">
               Legal
             </h4>
             <ul className="space-y-3">

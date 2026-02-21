@@ -98,7 +98,7 @@ const ProviderServiceCard = ({ provider, onStatusChange, onEditClick }) => {
 
         {/* Image Count Indicator */}
         {images.length > 1 && (
-          <div className="absolute bottom-4 right-4 bg-black/60 text-white px-3 py-1.5 rounded-lg text-xs font-medium backdrop-blur-md">
+          <div className="absolute bottom-4 right-4 bg-gray-800/60 text-white px-3 py-1.5 rounded-lg text-xs font-medium backdrop-blur-md">
             {images.length} Photos
           </div>
         )}

@@ -20,7 +20,7 @@ const StatsCard = ({ title, value, icon: Icon, color = 'green' }) => {
           </p>
         </div>
         {Icon && (
-          <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ml-4 ${colorClasses[color]}`}>
+          <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ml-4 ${colorClasses[color]}`}>
             <Icon className="w-6 h-6" />
           </div>
         )}

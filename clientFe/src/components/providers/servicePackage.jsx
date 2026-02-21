@@ -5,20 +5,20 @@ const ServicePackages = ({ services }) => {
 
   return (
     <section className="py-12 border-b border-gray-100">
-      <h2 className="text-lg font-semibold text-gray-900 mb-6">Services</h2>
+      <h2 className="text-lg font-semibold text-gray-800 mb-6">Services</h2>
 
       <div className="space_y-4">
         {services.map((service) => (
           <div key={service._id} className="pb-6 border-b border-gray-100 last:border-0">
             <div className="flex justify-between items-start mb-3">
               <div>
-                <h3 className="font-medium text-gray-900">{service.name}</h3>
+                <h3 className="font-medium text-gray-800">{service.name}</h3>
                 {service.description && (
                   <p className="text-sm text-gray-600 mt-1">{service.description}</p>
                 )}
               </div>
               <div className="text-right">
-                <p className="text-lg font-bold text-gray-900">${service.price}</p>
+                <p className="text-lg font-bold text-gray-800">${service.price}</p>
                 {service.duration && (
                   <p className="text-xs text-gray-500">{service.duration}h</p>
                 )}
