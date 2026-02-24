@@ -7,6 +7,7 @@ import serviceRoutes from './modules/services/service.routes.js'
 import searchRoutes from './modules/search/search.routes.js'
 import bookingRoutes from './modules/booking/booking.routes.js'
 import contactRequestRoutes from './modules/contactRequests/contactRequest.routes.js'
+import utilsRoutes from './modules/utils/utils.routes.js'
 import adminRoutes from './modules/admin/admin.routes.js'
 import cookieParser from 'cookie-parser'
 import errorHandler from './middlewares/error.middleware.js'
@@ -34,6 +35,7 @@ app.use('/api/search', searchRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/contact-request', contactRequestRoutes);
 app.use('/api/admin', adminRoutes)
+app.use('/api/utils', utilsRoutes)
 
 // ✅ Global Error Handler (must be last)
 app.use(errorHandler);
