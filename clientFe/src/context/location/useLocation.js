@@ -1,7 +1,8 @@
 import { useContext } from "react";
-import { LocationProvider } from "./locationProvider";
+import { LocationContext } from "./locationContext";
+
 export const useLocation = () => {
-  const context = useContext(LocationProvider);
+  const context = useContext(LocationContext);
 
   if (!context) {
     throw new Error("useLocation must be used inside LocationProvider");

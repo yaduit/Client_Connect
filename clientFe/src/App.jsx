@@ -6,6 +6,7 @@ import ProviderDetailsPage from "./pages/provider/providerDetailsPage.jsx";
 
 import LoginPage from "./pages/auth/loginPage.jsx";
 import SignupPage from "./pages/auth/signupPage.jsx";
+import WriteReviewPage from "./pages/auth/writeReviewPage.jsx";
 
 import ProviderOnboarding from "./pages/provider/providerOnboarding.jsx";
 import ProviderDashBoard from "./pages/provider/providerDashBoard.jsx";
@@ -28,6 +29,16 @@ function App() {
       <Route path="/search" element={<SearchPage />} />
       <Route path="/categories/:categorySlug" element={<CategoryPage />} />
       <Route path="/providers/:id" element={<ProviderDetailsPage />} />
+
+      {/* Review routes */}
+      <Route
+        path="/write-review"
+        element={
+          <ProtectedRoute requiredRole="seeker">
+            <WriteReviewPage />
+          </ProtectedRoute>
+        }
+      />
 
       {/* Provider routes */}
       <Route
