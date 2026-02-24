@@ -7,6 +7,7 @@ import serviceRoutes from './modules/services/service.routes.js'
 import searchRoutes from './modules/search/search.routes.js'
 import bookingRoutes from './modules/booking/booking.routes.js'
 import contactRequestRoutes from './modules/contactRequests/contactRequest.routes.js'
+import reviewRoutes from './modules/reviews/review.routes.js'
 import utilsRoutes from './modules/utils/utils.routes.js'
 import adminRoutes from './modules/admin/admin.routes.js'
 import cookieParser from 'cookie-parser'
@@ -33,7 +34,8 @@ app.use('/api/providers', serviceProviderRoutes);
 app.use('/api/services', serviceRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/bookings', bookingRoutes);
-app.use('/api/contact-request', contactRequestRoutes);
+app.use('/api/contact-requests', contactRequestRoutes);
+app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes)
 app.use('/api/utils', utilsRoutes)
 
