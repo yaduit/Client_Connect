@@ -33,7 +33,7 @@ const ProviderHero = ({ provider }) => {
           {/* Name & Category */}
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-800">
+              <h1 className="text-xl font-semibold text-gray-800">
                 {provider.businessName}
               </h1>
               <p className="text-sm text-gray-600 mt-1">

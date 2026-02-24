@@ -69,50 +69,54 @@ const ProviderDetails = () => {
     <div className="min-h-screen bg-white">
       <ProviderHeader onNavigate={() => navigate(-1)} />
 
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Section */}
-        <ProviderHero provider={provider} />
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          {/* Hero Section */}
+          <ProviderHero provider={provider} />
 
-        {/* Image Carousel Gallery */}
-        {provider.images && provider.images.length > 0 && (
-          <ImageCarousel images={provider.images} title="Portfolio & Photos" />
-        )}
+          {/* Image Carousel Gallery */}
+          {provider.images && provider.images.length > 0 && (
+            <div className="mt-6">
+              <ImageCarousel images={provider.images} title="Portfolio & Photos" />
+            </div>
+          )}
 
-        {/* About Section */}
-        {provider.description && (
-          <section className="py-12 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-800 mb-4">About</h2>
-            <p className="text-gray-600 leading-relaxed text-sm">
-              {provider.description}
-            </p>
+          {/* About Section */}
+          {provider.description && (
+            <section className="py-6 border-t border-gray-100">
+              <h2 className="text-base font-medium text-gray-800 mb-2">About</h2>
+              <p className="text-gray-600 leading-relaxed text-sm">
+                {provider.description}
+              </p>
+            </section>
+          )}
+
+          {/* Services Section */}
+          {provider.services && provider.services.length > 0 && (
+            <div className="py-6 border-t border-gray-100">
+              <ServicePackages services={provider.services} />
+            </div>
+          )}
+
+          {/* Reviews Section */}
+          {provider.reviews && provider.reviews.length > 0 && (
+            <div className="py-6 border-t border-gray-100">
+              <ReviewSection reviews={provider.reviews} />
+            </div>
+          )}
+
+          {/* CTA Section - SINGLE BUTTON */}
+          <section className="py-6 text-center border-t border-gray-100">
+            <h2 className="text-lg font-medium text-gray-800 mb-2">Ready to get started?</h2>
+            <p className="text-gray-600 text-sm mb-4">Contact {provider.businessName} today</p>
+            <button
+              onClick={() => setShowContact(true)}
+              className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors inline-block"
+            >
+              Contact & Book
+            </button>
           </section>
-        )}
-
-        {/* Services Section */}
-        {provider.services && provider.services.length > 0 && (
-          <ServicePackages services={provider.services} />
-        )}
-
-        {/* Reviews Section */}
-        {provider.reviews && provider.reviews.length > 0 && (
-          <ReviewSection reviews={provider.reviews} />
-        )}
-
-        {/* CTA Section - SINGLE BUTTON */}
-        <section className="py-12 text-center border-t border-gray-100">
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">
-            Ready to get started?
-          </h2>
-          <p className="text-gray-600 text-sm mb-6">
-            Contact {provider.businessName} today
-          </p>
-          <button
-            onClick={() => setShowContact(true)}
-            className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors inline-block"
-          >
-            Contact & Book
-          </button>
-        </section>
+        </div>
       </div>
 
       {/* Contact Modal */}

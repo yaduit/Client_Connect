@@ -53,10 +53,9 @@ const ProviderForm = () => {
           const { longitude, latitude } = pos.coords;
           setCoords([longitude, latitude]);
 
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
-          );
-          const data = await response.json();
+          const response = await fetch(`/api/utils/reverse?lat=${encodeURIComponent(latitude)}&lon=${encodeURIComponent(longitude)}`);
+          const json = await response.json();
+          const data = json.data || {};
 
           if (data.address) {
             setCity(data.address.city || data.address.town || "");

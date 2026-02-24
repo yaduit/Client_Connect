@@ -8,10 +8,9 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   const reverseGeocode = async (lat, lng) => {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
-    );
-    const data = await res.json();
+    const res = await fetch(`/api/utils/reverse?lat=${encodeURIComponent(lat)}&lon=${encodeURIComponent(lng)}`);
+    const json = await res.json();
+    const data = json.data || {};
     return (
       data.address?.city ||
       data.address?.town ||
@@ -21,16 +20,9 @@ const HeroSection = () => {
   };
 
   const resolveLocationToCoords = async (place) => {
-    const res = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`,
-      {
-        headers: {
-          "Accept": "application/json",
-          "User-Agent": "service-finder-app",
-        },
-      }
-    );
-    const data = await res.json();
+    const res = await fetch(`/api/utils/search?q=${encodeURIComponent(place)}`);
+    const json = await res.json();
+    const data = json.data || [];
     if (!data.length) {
       throw new Error("Location not found");
     }

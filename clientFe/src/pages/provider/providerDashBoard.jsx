@@ -42,6 +42,7 @@ const ProviderDashboard = () => {
   // ============ MODAL STATES ============
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateServiceOpen, setIsCreateServiceOpen] = useState(false);
+  const [selectedService, setSelectedService] = useState(null);
   const [showImageModal, setShowImageModal] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [activeTab, setActiveTab] = useState("services"); // services | bookings | contact-requests | analytics
@@ -332,6 +333,7 @@ const ProviderDashboard = () => {
               <h3 className="text-xl font-bold text-gray-800">My Services</h3>
               <button
                 onClick={() => {
+                  setSelectedService(null);
                   setIsCreateServiceOpen(true);
                 }}
                 className="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition font-medium text-sm"
@@ -369,7 +371,8 @@ const ProviderDashboard = () => {
                   <ServiceCard
                     key={svc._id}
                     service={svc}
-                    onEdit={() => {
+                    onEdit={(service) => {
+                      setSelectedService(service);
                       setIsCreateServiceOpen(true);
                     }}
                     onDelete={(serviceId) => {
@@ -595,8 +598,15 @@ const ProviderDashboard = () => {
       <ServiceModal
         isOpen={isCreateServiceOpen}
         onClose={() => setIsCreateServiceOpen(false)}
-        onSuccess={(created) => {
-          setServices((prev) => [created, ...prev]);
+        provider={provider}
+        service={selectedService}
+        onSuccess={(result) => {
+          if (selectedService) {
+            setServices((prev) => prev.map(s => (s._id === result._id ? result : s)));
+          } else {
+            setServices((prev) => [result, ...prev]);
+          }
+          setSelectedService(null);
           setIsCreateServiceOpen(false);
           refetchServices();
         }}
