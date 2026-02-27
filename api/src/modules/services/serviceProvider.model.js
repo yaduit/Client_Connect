@@ -1,30 +1,43 @@
 import mongoose from 'mongoose';
 
+// NOTE: previous versions of this schema defined `unique: true` on
+// slug and userId *and* created indexes separately, which caused
+// mongoose warnings about duplicate schema indexes.  We now define
+// the unique indexes explicitly below and remove the inline `unique`
+// flags.  When upgrading ensure you drop any existing duplicate
+// indexes from the `serviceproviders` collection (e.g.
+// `db.serviceproviders.dropIndex('slug_1')` in the mongo shell) so
+// that mongoose can recreate them cleanly.  
+
 const serviceProviderSchema = new mongoose.Schema({
   // User reference
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
-    unique: true
+    // unique index defined explicitly below to avoid duplicate warnings
   },
 
-  // Basic info
+  // Business Information
   businessName: {
     type: String,
     required: true,
-    trim: true,
-    minlength: 3,
-    maxlength: 100
+    trim: true
+  },
+
+  slug: {
+    type: String,
+    trim: true
+    // unique index defined explicitly below to avoid duplicate warnings
   },
 
   description: {
     type: String,
     trim: true,
-    maxlength: 500
+    default: ''
   },
 
-  // Category info
+  // Category
   categoryId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'category',
@@ -33,23 +46,32 @@ const serviceProviderSchema = new mongoose.Schema({
 
   subCategorySlug: {
     type: String,
-    required: true,
-    lowercase: true,
     trim: true
   },
 
-  // Location
+  // Location with Geospatial Support
   location: {
+    address: {
+      type: String,
+      trim: true
+    },
     city: {
       type: String,
-      required: true,
       trim: true
     },
     state: {
       type: String,
-      required: true,
       trim: true
     },
+    zipCode: {
+      type: String,
+      trim: true
+    },
+    country: {
+      type: String,
+      default: 'USA'
+    },
+    // GeoJSON Point for geospatial queries
     geo: {
       type: {
         type: String,
@@ -58,30 +80,64 @@ const serviceProviderSchema = new mongoose.Schema({
       },
       coordinates: {
         type: [Number], // [longitude, latitude]
-        required: true,
-        validate: {
-          validator: (v) => v.length === 2,
-          message: 'Coordinates must be [longitude, latitude]'
-        }
+        // no default; coordinates must be provided by the application
       }
     }
   },
 
-  // Service images
+  // Images
   images: [
     {
-      url: {
-        type: String,
-        required: true,
-        trim: true
-      },
-      publicId: {
-        type: String,
-        required: true,
-        trim: true
-      }
+      url: String,
+      publicId: String
     }
   ],
+
+  // Contact Information
+  phone: {
+    type: String,
+    trim: true
+  },
+
+  email: {
+    type: String,
+    trim: true,
+    lowercase: true
+  },
+
+  website: {
+    type: String,
+    trim: true
+  },
+
+  // Ratings & Reviews
+  ratingAverage: {
+    type: Number,
+    default: 0,
+    min: 0,
+    max: 5
+  },
+
+  totalReviews: {
+    type: Number,
+    default: 0
+  },
+
+  // Stats
+  totalViews: {
+    type: Number,
+    default: 0
+  },
+
+  totalInquiries: {
+    type: Number,
+    default: 0
+  },
+
+  totalBookings: {
+    type: Number,
+    default: 0
+  },
 
   // Status
   isActive: {
@@ -94,178 +150,45 @@ const serviceProviderSchema = new mongoose.Schema({
     default: false
   },
 
-  // Public URL slug
-  slug: {
-    type: String,
-    unique: true,
-    sparse: true,
-    lowercase: true,
-    trim: true
+  isVerified: {
+    type: Boolean,
+    default: false
   },
 
-  // Metrics
-  totalViews: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-
-  totalInquiries: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-
-  totalBookings: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-
-  // Performance metrics
-  ratingAverage: {
-    type: Number,
-    default: 0,
-    min: 0,
-    max: 5
-  },
-
-  totalReviews: {
-    type: Number,
-    default: 0,
-    min: 0
-  },
-
-  avgResponseTime: {
-    type: Number,
-    default: 24, // hours
-    min: 0
-  },
-
-  completionRate: {
-    type: Number,
-    default: 100, // percentage
-    min: 0,
-    max: 100
+  // Business Hours
+  businessHours: {
+    monday: { open: String, close: String, isOpen: Boolean },
+    tuesday: { open: String, close: String, isOpen: Boolean },
+    wednesday: { open: String, close: String, isOpen: Boolean },
+    thursday: { open: String, close: String, isOpen: Boolean },
+    friday: { open: String, close: String, isOpen: Boolean },
+    saturday: { open: String, close: String, isOpen: Boolean },
+    sunday: { open: String, close: String, isOpen: Boolean }
   }
-}, {
-  timestamps: true,
-  collection: 'serviceproviders'
+}, { 
+  timestamps: true 
 });
 
-// ============ INDEXES ============
-
-// Geospatial index for location-based queries
+// Create 2dsphere index for geospatial queries
 serviceProviderSchema.index({ 'location.geo': '2dsphere' });
 
+// Unique indexes (explicit to avoid duplicates when using `unique:true` in field definitions)
+serviceProviderSchema.index({ userId: 1 }, { unique: true });
+serviceProviderSchema.index({ slug: 1 }, { unique: true });
 
+// Additional indexes for performance
+serviceProviderSchema.index({ categoryId: 1, isActive: 1 });
+serviceProviderSchema.index({ ratingAverage: -1 });
 
-// Category search
-serviceProviderSchema.index({ categoryId: 1, subCategorySlug: 1 });
-
-// Status filtering
-serviceProviderSchema.index({ isActive: 1 });
-
-// Sorting by rating
-serviceProviderSchema.index({ ratingAverage: -1, totalReviews: -1 });
-
-// ============ INSTANCE METHODS ============
-
-/**
- * Increment total views count
- */
-serviceProviderSchema.methods.incrementViews = function () {
-  this.totalViews += 1;
-  return this.save();
-};
-
-/**
- * Increment total inquiries count
- */
-serviceProviderSchema.methods.incrementInquiries = function () {
-  this.totalInquiries += 1;
-  return this.save();
-};
-
-/**
- * Increment total bookings count
- */
-serviceProviderSchema.methods.incrementBookings = function () {
-  this.totalBookings += 1;
-  return this.save();
-};
-
-/**
- * Update rating and review count
- */
-serviceProviderSchema.methods.updateRating = function (newRating, totalReviews) {
-  this.ratingAverage = newRating;
-  this.totalReviews = totalReviews;
-  return this.save();
-};
-
-// ============ STATIC METHODS ============
-
-/**
- * Find providers near a location
- * @param {Array} coordinates [longitude, latitude]
- * @param {Number} maxDistance Distance in meters (default 50km)
- */
-serviceProviderSchema.statics.findNearby = function (coordinates, maxDistance = 50000) {
-  return this.find({
-    isActive: true,
-    'location.geo': {
-      $near: {
-        $geometry: {
-          type: 'Point',
-          coordinates
-        },
-        $maxDistance: maxDistance
-      }
-    }
-  });
-};
-
-/**
- * Find providers by category and location
- */
-serviceProviderSchema.statics.findByCategoryNearby = function (
-  categoryId,
-  coordinates,
-  maxDistance = 50000
-) {
-  return this.find({
-    isActive: true,
-    categoryId,
-    'location.geo': {
-      $near: {
-        $geometry: {
-          type: 'Point',
-          coordinates
-        },
-        $maxDistance: maxDistance
-      }
-    }
-  }).sort({ ratingAverage: -1, totalReviews: -1 });
-};
-
-/**
- * Find top-rated providers
- */
-serviceProviderSchema.statics.findTopRated = function (limit = 10) {
-  return this.find({ isActive: true })
-    .sort({ ratingAverage: -1, totalReviews: -1 })
-    .limit(limit);
-};
-
-/**
- * Find providers by category
- */
-serviceProviderSchema.statics.findByCategory = function (categoryId) {
-  return this.find({
-    isActive: true,
-    categoryId
-  }).sort({ ratingAverage: -1 });
-};
+// Pre-save hook to generate slug
+serviceProviderSchema.pre('save', function(next) {
+  if (this.isModified('businessName') && !this.slug) {
+    this.slug = this.businessName
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '') + '-' + this._id.toString().slice(-6);
+  }
+  next();
+});
 
 export default mongoose.model('serviceProvider', serviceProviderSchema);

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 export const searchProviders = async (req, res) => {
   try {
-    const {
+    let {
       lat,
       lng,
       radius = 10,
@@ -14,8 +14,23 @@ export const searchProviders = async (req, res) => {
       limit = 9,
     } = req.query;
 
+    // convert string query params to numbers where appropriate
+    const latNum = lat !== undefined ? Number(lat) : null;
+    const lngNum = lng !== undefined ? Number(lng) : null;
+    const radNum = Number(radius);
+
+    if ((lat !== undefined && isNaN(latNum)) || (lng !== undefined && isNaN(lngNum))) {
+      return res.status(400).json({ message: "Invalid latitude or longitude" });
+    }
+
+    if (isNaN(radNum) || radNum < 0) {
+      return res.status(400).json({ message: "Invalid radius" });
+    }
+
     const filters = {
       isActive: true,
+      // always ignore providers without coordinates or with default [0,0]
+      'location.geo.coordinates': { $ne: [0, 0] }
     };
 
     /* ---------------- CATEGORY FILTER ---------------- */
@@ -35,16 +50,16 @@ export const searchProviders = async (req, res) => {
     /* ---------------- LOCATION FILTER (OPTIONAL) ---------------- */
     let providers;
 
-    if (lat && lng) {
+    if (latNum !== null && lngNum !== null) {
       const geoQuery = {
         $geoNear: {
           near: {
             type: "Point",
-            coordinates: [Number(lng), Number(lat)],
+            coordinates: [lngNum, latNum],
           },
           distanceField: "distance",
           spherical: true,
-          maxDistance: Number(radius) * 1000,
+          maxDistance: radNum * 1000, // meters
           query: filters,
         },
       };
