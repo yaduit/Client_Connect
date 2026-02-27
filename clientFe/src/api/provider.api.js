@@ -37,7 +37,7 @@ export const activateProviderApi = async () => {
   return res.data;
 };
 
-// ============ NEW IMAGE ENDPOINTS ============
+// ============ IMAGE ENDPOINTS ============
 
 /**
  * Upload service images to Cloudinary
@@ -77,5 +77,46 @@ export const uploadProviderImagesApi = async (files) => {
  */
 export const deleteProviderImageApi = async (publicId) => {
   const res = await api.delete(`/providers/me/images/${encodeURIComponent(publicId)}`);
+  return res.data;
+};
+
+// ============ RELATED PROVIDERS ENDPOINT ============
+
+/**
+ * Get related/similar providers by category and optional proximity
+ * @param {Object} params - Query parameters
+ * @param {string} params.categoryId - Category ID (required)
+ * @param {string} params.excludeId - Provider ID to exclude from results (optional)
+ * @param {number} params.lat - Latitude for proximity sorting (optional)
+ * @param {number} params.lng - Longitude for proximity sorting (optional)
+ * @param {number} params.limit - Maximum number of results (default: 6)
+ * @returns {Promise} - Related providers array
+ * 
+ * Example:
+ * const response = await getRelatedProvidersApi({ 
+ *   categoryId: '507f1f77bcf86cd799439011',
+ *   excludeId: '507f191e810c19729de860ea',
+ *   lat: 34.0522,
+ *   lng: -118.2437,
+ *   limit: 6
+ * });
+ */
+export const getRelatedProvidersApi = async ({ categoryId, excludeId, lat, lng, limit = 6 }) => {
+  const params = {
+    categoryId,
+    limit
+  };
+
+  // Add optional parameters if provided
+  if (excludeId) {
+    params.excludeId = excludeId;
+  }
+
+  if (lat !== null && lat !== undefined && lng !== null && lng !== undefined) {
+    params.lat = lat;
+    params.lng = lng;
+  }
+
+  const res = await api.get('/providers/related', { params });
   return res.data;
 };
